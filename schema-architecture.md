@@ -1,4 +1,4 @@
-Section 1: Architecture Summary
+## Section 1: Architecture Summary
 This project uses the Spring Framework, which follows the Model-View-Controller (MVC) design pattern.
 
 The presentation layer utilizes Thymeleaf for rendering AdminDashboard and DoctorDashboard HTML pages on the server.
@@ -22,13 +22,17 @@ MongoDB for document-oriented data such as prescriptions.
 
 
 
-Section 2: Flow of Data and Control
-The user navigates to AdminDashboard or interacts with pages like Appointments.
+## Section 2: Flow of Data and Control
+1. A user action—like loading the AdminDashboard page or calling an API endpoint (e.g. Appointments)—originates in the browser or mobile client.
 
-The request is routed to the appropriate Thymeleaf or REST controller.
+2. The incoming HTTP request is dispatched to the matching Spring controller: a Thymeleaf controller for server-rendered views or a REST controller for JSON APIs.
 
-The controller invokes a service class to validate input and process logic.
+3. Within the controller, input is validated and then handed off to a service class that encapsulates the business rules (e.g. checking doctor availability, enforcing booking constraints).
 
-The service communicates with MySQL or MongoDB through repository interfaces.
+4. The service invokes one or more repository interfaces: Spring Data JPA repositories talk to MySQL for structured entities, and Spring Data MongoDB repositories handle document collections.
 
-The database returns the requested data, which is then sent back to the user as a rendered page or JSON response.
+5. The repository layer executes queries against the appropriate database engine—MySQL for relational tables and MongoDB for flexible documents—and returns raw data.
+
+6. Returned data is bound to Java model objects: JPA entities for MySQL records and document‐annotated classes for MongoDB data.
+
+7. Finally, the controller uses those model objects to produce the response—Thymeleaf templates render dynamic HTML, or REST endpoints serialize the models (or DTOs) into JSON—and sends it back to the client.
