@@ -70,3 +70,16 @@
 
     If saving fails, show an error message
 */
+
+
+import { createDoctorCard } from './components/doctorCard.js';
+
+function renderDoctors(doctors) {
+  const container = document.getElementById("doctorList");
+  container.innerHTML = "";
+
+  doctors.forEach(doctor => {
+    const card = createDoctorCard(doctor);
+    container.appendChild(card);
+  });
+}

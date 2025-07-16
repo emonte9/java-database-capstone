@@ -51,3 +51,166 @@
 * Use the same base green background (`#015c5d`) as the default button.
 * On hover, darken the background to deep teal (`#003e3e`) for visual feedback.
  */
+
+/* Global Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  font-family: 'Roboto', Arial, sans-serif;
+  background: #f7f9fa;
+}
+
+/* Layout Wrapper */
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* Header */
+#header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24px 40px;
+  background: #fff;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+/* Main Content Area */
+.main-content {
+  flex-grow: 1;
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background: url('../images/defineRole/index.png') center center/cover no-repeat fixed;
+}
+
+/* Heading */
+h2 {
+  font-size: 48px;
+  margin-bottom: 50px;
+  color: #003e3e;
+  font-weight: bold;
+  font-family: 'Alegreya', 'Roboto', sans-serif;
+}
+
+/* Buttons */
+button {
+  background: #015c5d;
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  padding: 10px 20px;
+  width: 200px;
+  margin-top: 10px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.2s;
+  font-family: inherit;
+}
+button:hover {
+  background: #A62B1F;
+}
+
+/* Modal Styles */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0; top: 0;
+  width: 100vw; height: 100vh;
+  background: rgba(0,0,0,0.5);
+  align-items: center;
+  justify-content: center;
+}
+.modal.active {
+  display: flex;
+}
+.modal-content {
+  background: #fff;
+  border-radius: 16px;
+  padding: 32px 24px;
+  min-width: 320px;
+  max-width: 90vw;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+  position: relative;
+}
+
+.close-btn:focus, button:focus {
+  outline: 2px solid #015c5d;
+  outline-offset: 2px;
+}
+
+.close-btn {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  background: transparent;
+  border: none;
+  font-size: 28px;
+  color: #015c5d;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+.close-btn:hover {
+  color: #A62B1F;
+}
+
+/* Footer */
+#footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 40px;
+  background: #fff;
+  border-top: 1px solid #e0e0e0;
+  font-size: 16px;
+  color: #015c5d;
+}
+
+@media (max-width: 600px) {
+  #header, #footer {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 16px;
+  }
+  .main-content {
+    padding: 16px;
+  }
+  h2 {
+    font-size: 32px;
+  }
+  button {
+    width: 100%;
+    font-size: 15px;
+  }
+}
+
+/* Dashboard button (if used elsewhere) */
+.dashboard-btn {
+  background: #015c5d;
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  padding: 10px 20px;
+  width: 200px;
+  margin-top: 10px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.2s;
+  font-family: inherit;
+}
+.dashboard-btn:hover {
+  background: #003e3e;
+}
+
+
