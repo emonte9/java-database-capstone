@@ -51,3 +51,90 @@
 
    Catch any other errors, alert the user, and return a default empty result
 */
+
+
+// app/src/main/resources/static/js/services/doctorServices.js
+
+import { API_BASE_URL } from "../config/config.js";
+
+const DOCTOR_API = `${API_BASE_URL}/doctor`;
+
+// Get all doctors
+export async function getDoctors() {
+  try {
+    const res = await fetch(`${DOCTOR_API}/all`);
+    if (!res.ok) throw new Error("Failed to fetch doctors");
+    const data = await res.json();
+    return data.doctors || [];
+  } catch (error) {
+    console.error("Error fetching doctors:", error);
+    return [];
+  }
+}
+
+// Delete doctor by ID (requires auth token)
+export async function deleteDoctor(id, token) {
+  try {
+    const res = await fetch(`${DOCTOR_API}/delete/${id}?token=${token}`, {
+      method: "DELETE",
+    });
+
+    const data = await res.json();
+    return {
+      success: res.ok,
+      message: data.message || "Deletion failed",
+    };
+  } catch (error) {
+    console.error("Error deleting doctor:", error);
+    return {
+      success: false,
+      message: "An error occurred while deleting the doctor.",
+    };
+  }
+}
+
+// Save a new doctor (requires auth token)
+export async function saveDoctor(doctor, token) {
+  try {
+    const res = await fetch(`${DOCTOR_API}/add?token=${token}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(doctor),
+    });
+
+    const data = await res.json();
+    return {
+      success: res.ok,
+      message: data.message || "Doctor saved successfully",
+    };
+  } catch (error) {
+    console.error("Error saving doctor:", error);
+    return {
+      success: false,
+      message: "An error occurred while saving the doctor.",
+    };
+  }
+}
+
+// Filter doctors by name, time, and specialty
+export async function filterDoctors(name, time, specialty) {
+  const filterURL = `${DOCTOR_API}/filter/${name || "null"}/${time || "null"}/${specialty || "null"}`;
+
+  try {
+    const res = await fetch(filterURL);
+    if (!res.ok) {
+      console.error("Filter request failed:", res.status);
+      return [];
+    }
+
+    const data = await res.json();
+    return data.doctors || [];
+  } catch (error) {
+    console.error("Error filtering doctors:", error);
+    alert("Failed to fetch filtered doctors.");
+    return [];
+  }
+}
+

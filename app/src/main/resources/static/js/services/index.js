@@ -56,3 +56,86 @@
     - Log the error to the console
     - Show a generic error message
 */
+
+
+// Import necessary modules
+// index.js
+
+import { openModal } from '../components/modals.js';
+import { API_BASE_URL } from '../config/config.js';
+import { setRole } from '../render.js';
+
+// API endpoints
+const ADMIN_API = `${API_BASE_URL}/admin`;
+const DOCTOR_API = `${API_BASE_URL}/doctor/login`;
+
+window.onload = function () {
+  const adminBtn = document.getElementById('admin-btn');
+  const doctorBtn = document.getElementById('doctor-btn');
+
+  if (adminBtn) {
+    adminBtn.addEventListener('click', () => openModal('adminLogin'));
+  }
+
+  if (doctorBtn) {
+    doctorBtn.addEventListener('click', () => openModal('doctorLogin'));
+  }
+};
+
+// Admin login handler
+export async function adminLoginHandler() {
+  const username = document.getElementById('username')?.value;
+  const password = document.getElementById('password')?.value;
+
+  const admin = { username, password };
+
+  try {
+    const res = await fetch(ADMIN_API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(admin)
+    });
+
+    if (!res.ok) {
+      alert('Invalid credentials!');
+      return;
+    }
+
+    const data = await res.json();
+    localStorage.setItem('token', data.token);
+    setRole('admin');
+    window.location.href = `/adminDashboard/${data.token}`;
+  } catch (err) {
+    console.error(err);
+    alert('Login failed. Please try again.');
+  }
+}
+
+// Doctor login handler
+export async function doctorLoginHandler() {
+  const email = document.getElementById('email')?.value;
+  const password = document.getElementById('password')?.value;
+
+  const doctor = { email, password };
+
+  try {
+    const res = await fetch(DOCTOR_API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(doctor)
+    });
+
+    if (!res.ok) {
+      alert('Invalid credentials!');
+      return;
+    }
+
+    const data = await res.json();
+    localStorage.setItem('token', data.token);
+    setRole('doctor');
+    window.location.href = `/doctorDashboard/${data.token}`;
+  } catch (err) {
+    console.error(err);
+    alert('Login failed. Please try again.');
+  }
+}
