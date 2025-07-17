@@ -1,5 +1,20 @@
 package com.project.back_end.services;
 
+import java.nio.charset.StandardCharsets;
+
+import javax.crypto.SecretKey;
+
+import org.springframework.beans.factory.annotation.Value;
+
+import com.project.back_end.repo.AdminRepository;
+import com.project.back_end.repo.DoctorRepository;
+import com.project.back_end.repo.PatientRepository;
+
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
+import jakarta.annotation.PostConstruct;
+
 public class TokenService {
 // 1. **@Component Annotation**
 // The @Component annotation marks this class as a Spring component, meaning Spring will manage it as a bean within its application context.
@@ -38,6 +53,72 @@ public class TokenService {
 // - If the role or user does not exist, it returns false, indicating the token is invalid.
 // - The method gracefully handles any errors by returning false if the token is invalid or an exception occurs.
 // This ensures secure access control based on the user's role and their existence in the system.
+
+
+
+
+
+
+    // private final AdminRepository adminRepository;
+    // private final DoctorRepository doctorRepository;
+    // private final PatientRepository patientRepository;
+
+    // @Value("${jwt.secret}")
+    // private String jwtSecret;
+
+    // private SecretKey secretKey;
+
+    // public TokenService(AdminRepository adminRepository,
+    //                     DoctorRepository doctorRepository,
+    //                     PatientRepository patientRepository) {
+    //     this.adminRepository = adminRepository;
+    //     this.doctorRepository = doctorRepository;
+    //     this.patientRepository = patientRepository;
+    // }
+
+    // @PostConstruct
+    // private void initKey() {
+    //     this.secretKey = Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
+    // }
+
+    // // 1. Generate JWT Token for a given email
+    // public String generateToken(String email) {
+    //     return Jwts.builder()
+    //             .setSubject(email)
+    //             .setIssuedAt(new Date(System.currentTimeMillis()))
+    //             .setExpiration(new Date(System.currentTimeMillis() + 604800000)) // 7 days in ms
+    //             .signWith(secretKey)
+    //             .compact();
+    // }
+
+    // // 2. Extract Email from JWT Token
+    // public String extractEmail(String token) {
+    //     Claims claims = Jwts.parserBuilder()
+    //             .setSigningKey(secretKey)
+    //             .build()
+    //             .parseClaimsJws(token)
+    //             .getBody();
+
+    //     return claims.getSubject();
+    // }
+
+    // // 3. Validate Token for a Given Role
+    // public boolean validateToken(String token, String role) {
+    //     try {
+    //         String email = extractEmail(token);
+
+    //         return switch (role.toLowerCase()) {
+    //             case "admin" -> adminRepository.findByEmail(email).isPresent();
+    //             case "doctor" -> doctorRepository.findByEmail(email).isPresent();
+    //             case "patient" -> patientRepository.findByEmail(email).isPresent();
+    //             default -> false;
+    //         };
+    //     } catch (Exception e) {
+    //         return false;
+    //     }
+    // }
+
+
 
 
 }
