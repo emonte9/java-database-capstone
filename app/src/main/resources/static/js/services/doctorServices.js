@@ -57,26 +57,59 @@
 
 import { API_BASE_URL } from "../config/config.js";
 
+
 const DOCTOR_API = `${API_BASE_URL}/doctor`;
 
+
+// const DOCTOR_API = `${API_BASE_URL}/doctor`;
+// const DOCTOR_API = `${API_BASE_URL}/doctor`;
+// const DOCTOR_API = "/api/doctor";
+
 // Get all doctors
+
+
+
+
 export async function getDoctors() {
   try {
-    const res = await fetch(`${DOCTOR_API}/all`);
+    const res = await fetch(`${DOCTOR_API}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
     if (!res.ok) throw new Error("Failed to fetch doctors");
     const data = await res.json();
-    return data.doctors || [];
+    // return data.doctors || [];
+    // return { doctors: data };
+    // return { doctors: data.doctors || [] }; // ✅ flat structure
+    // return data.doctors || [];
+    return { doctors: data.doctors || [] };
   } catch (error) {
     console.error("Error fetching doctors:", error);
-    return [];
+    // return [];
+    // return { doctors: [] };
+    return { doctors: [] };
   }
 }
 
-// Delete doctor by ID (requires auth token)
+
+
 export async function deleteDoctor(id, token) {
+  
+  console.log("Deleting doctor with token:", token); // ❗ Check this output
+  if (!token || token === "null") {
+    return {
+      success: false,
+      message: "Missing or invalid auth token.",
+    };
+  }
+
   try {
-    const res = await fetch(`${DOCTOR_API}/delete/${id}?token=${token}`, {
+    const res = await fetch(`${DOCTOR_API}/${id}/${token}`, {
       method: "DELETE",
+      headers: { "Content-Type": "application/json" },
     });
 
     const data = await res.json();
@@ -92,6 +125,10 @@ export async function deleteDoctor(id, token) {
     };
   }
 }
+
+
+
+
 
 // Save a new doctor (requires auth token)
 export async function saveDoctor(doctor, token) {
@@ -118,23 +155,53 @@ export async function saveDoctor(doctor, token) {
   }
 }
 
-// Filter doctors by name, time, and specialty
+// // Filter doctors by name, time, and specialty
+// export async function filterDoctors(name, time, specialty) {
+//   const filterURL = `${DOCTOR_API}/filter/${name || "null"}/${time || "null"}/${specialty || "null"}`;
+
+//   try {
+//     const res = await fetch(filterURL);
+//     if (!res.ok) {
+//       console.error("Filter request failed:", res.status);
+//       return [];
+//     }
+
+//     const data = await res.json();
+//     // console.log(data.doctor)
+//     return data.doctors || [];
+//     // setDoctors(filtered);
+//   } catch (error) {
+//     console.error("Error filtering doctors:", error);
+//     alert("Failed to fetch filtered doctors.");
+//     // return [];
+//     return [];
+//   }
+
+
+
+ 
+//  }
 export async function filterDoctors(name, time, specialty) {
-  const filterURL = `${DOCTOR_API}/filter/${name || "null"}/${time || "null"}/${specialty || "null"}`;
+  const filterURL = `${DOCTOR_API}/filter/${name || "all"}/${time || "all"}/${specialty || "all"}`;
+  console.log("Requesting:", filterURL); // 🔍 URL debug
 
   try {
     const res = await fetch(filterURL);
     if (!res.ok) {
       console.error("Filter request failed:", res.status);
-      return [];
+      return { doctors: [] };
     }
 
     const data = await res.json();
-    return data.doctors || [];
+    console.log("Response from backend:", data); // 🔍 inspect structure
+
+    return { doctors: data.doctors || [] }; // ✅ same structure
+    // IF backend returns { doctors: [...] }
+    // return data.doctors || [];
   } catch (error) {
     console.error("Error filtering doctors:", error);
     alert("Failed to fetch filtered doctors.");
-    return [];
+    return { doctors: [] };
+    // return [];
   }
 }
-

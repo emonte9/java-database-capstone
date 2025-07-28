@@ -1,5 +1,7 @@
 package com.project.back_end.DTO;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class Login {
     
 // 1. 'email' field:
@@ -25,6 +27,45 @@ public class Login {
 //    - The 'setEmail(String email)' method sets the email value.
 //    - The 'getPassword()' method allows access to the password value.
 //    - The 'setPassword(String password)' method sets the password value.
+
+
+    @JsonProperty("email")
+    private String identifier; 
+    
+    private String password;
+
+
+
+     public Login() {
+    }
+
+    // Constructor with fields (optional)
+    public Login(String identifier, String password) {
+        this.identifier = identifier;
+        this.password = password;
+    }
+
+    // Getters and Setters
+
+    public String getIdentifier() {
+        return identifier;
+    }
+
+    public void setIdentifier(String identifier) {
+        this.identifier = identifier;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+
+
+
 
 
 }

@@ -127,8 +127,14 @@
 
 // header.js
 
-import { openModal } from './modals.js'; // correct relative path
+// import { openModal } from './modals.js'; // correct relative path
+import { openModal } from './modals.js';
+// app/src/main/resources/static/js/components/header.js
+// app/src/main/resources/static/js/components/modals.js
 
+document.addEventListener("DOMContentLoaded", () => {
+  renderHeader();
+});
 
 function renderHeader() {
   const headerDiv = document.getElementById("header");
@@ -151,6 +157,12 @@ function renderHeader() {
   const token = localStorage.getItem("token");
 
   // Handle expired session for logged-in users
+  // if ((role === "loggedPatient" || role === "admin" || role === "doctor") && !token) {
+  //   localStorage.removeItem("userRole");
+  //   alert("Session expired or invalid login. Please log in again.");
+  //   window.location.href = "/";
+  //   return;
+  // }
   if ((role === "loggedPatient" || role === "admin" || role === "doctor") && !token) {
     localStorage.removeItem("userRole");
     alert("Session expired or invalid login. Please log in again.");

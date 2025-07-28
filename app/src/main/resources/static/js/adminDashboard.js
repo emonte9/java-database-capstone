@@ -76,9 +76,11 @@
 
 
 // Import necessary modules
-import { openModal } from '../components/modals.js';
-import { API_BASE_URL } from '../config/config.js';
-import { selectRole } from '../render.js'; // Optional, if selectRole is defined there
+import { openModal } from './components/modals.js';
+// import { API_BASE_URL } from '../config/config.js';
+// import { API_BASE_URL } from '/js/config/config.js';
+import { API_BASE_URL } from '/js/config/config.js';
+import { selectRole } from './render.js'; // Optional, if selectRole is defined there
 
 // API endpoints
 const ADMIN_API = `${API_BASE_URL}/admin`;

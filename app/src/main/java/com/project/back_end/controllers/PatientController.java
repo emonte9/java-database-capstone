@@ -1,6 +1,33 @@
 package com.project.back_end.controllers;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.project.back_end.DTO.Login;
+import com.project.back_end.models.Patient;
+import com.project.back_end.services.CentralService;
+import com.project.back_end.services.PatientService;
+import com.project.back_end.services.TokenService;
+
+// @RestController
+// @RequestMapping("/patient")
+// @RestController
+// @RequestMapping("${api.path}/patient")
+@RestController
+@RequestMapping("${api.path}patient")
 public class PatientController {
+
+    private final TokenService tokenService;
 
 // 1. Set Up the Controller Class:
 //    - Annotate the class with `@RestController` to define it as a REST API controller for patient-related operations.
@@ -44,6 +71,93 @@ public class PatientController {
 //    - Accepts filtering parameters: `condition`, `name`, and a token.
 //    - Token must be valid for a `"patient"` role.
 //    - If valid, delegates filtering logic to the shared service and returns the filtered result.
+
+    @Autowired
+    private PatientService patientService;
+
+    @Autowired
+    private CentralService centralService;
+
+
+    PatientController(TokenService tokenService) {
+        this.tokenService = tokenService;
+    }
+
+
+    // 1. Get Patient Details
+    @GetMapping("/{token}")
+    public ResponseEntity<?> getPatientDetails(@PathVariable String token) {
+        return patientService.getPatientDetails(token);
+    }
+
+
+    // 2. Create a New Patient
+    @PostMapping
+    public ResponseEntity<?> createPatient(@RequestBody Patient patient) {
+        try {
+            boolean valid = centralService.validatePatient(patient);
+            if (!valid) {
+                return ResponseEntity.status(409)
+                        .body(java.util.Map.of("error", "Patient with email id or phone no already exist"));
+            }
+
+                int created = patientService.createPatient(patient);
+                if (created == 1) {
+                    return ResponseEntity.status(201)
+                            .body(Map.of("message", "Signup successful"));
+                } else {
+                    return ResponseEntity.status(500)
+                            .body(Map.of("error", "Internal server error"));
+                }
+            } catch (Exception e) {
+                return ResponseEntity.status(500)
+                        .body(Map.of("error", "Internal server error"));
+            }
+    }
+
+
+
+    // 3. Patient Login
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody Login login) {
+        return centralService.validatePatientLogin(login);
+    }
+
+    // 4. Get Patient Appointments
+    @GetMapping("/{id}/{token}")
+    public ResponseEntity<?> getPatientAppointments(
+            @PathVariable Long id,
+            @PathVariable String token) {
+
+        ResponseEntity<java.util.Map<String, String>> validation = centralService.validateToken(token, "patient");
+
+        if (!validation.getStatusCode().is2xxSuccessful()) {
+            return validation;
+        }
+
+        return patientService.getPatientAppointment(id, token);
+    }
+
+    // 5. Filter Patient Appointments
+    @GetMapping("/filter/{condition}/{name}/{token}")
+    public ResponseEntity<?> filterAppointments(
+            @PathVariable String condition,
+            @PathVariable String name,
+            @PathVariable String token) {
+
+        if (!tokenService.validateToken(token, "patient")) {
+            Map<String, String> result = new HashMap<>();
+            result.put("error", "Invalid or expired token");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(result);
+        }
+            
+        return centralService.filterPatient(condition, name, token);
+    }
+
+
+
+
+
 
 
 

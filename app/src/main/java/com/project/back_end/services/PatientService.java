@@ -1,5 +1,26 @@
 package com.project.back_end.services;
 
+
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+
+import com.project.back_end.DTO.AppointmentDTO;
+import com.project.back_end.models.Appointment;
+import com.project.back_end.models.Patient;
+import com.project.back_end.repo.AppointmentRepository;
+import com.project.back_end.repo.PatientRepository;
+
+import jakarta.transaction.Transactional;
+
+@Service
 public class PatientService {
 // 1. **Add @Service Annotation**:
 //    - The `@Service` annotation is used to mark this class as a Spring service component. 
@@ -52,6 +73,137 @@ public class PatientService {
 // 10. **Use of DTOs (Data Transfer Objects)**:
 //    - The service uses `AppointmentDTO` to transfer appointment-related data between layers. This ensures that sensitive or unnecessary data (e.g., password or private patient information) is not exposed in the response.
 //    - Instruction: Ensure that DTOs are used appropriately to limit the exposure of internal data and only send the relevant fields to the client.
+
+    private final PatientRepository patientRepository;
+    private final AppointmentRepository appointmentRepository;
+    private final TokenService tokenService;
+
+
+
+
+    public PatientService(PatientRepository patientRepository,
+                          AppointmentRepository appointmentRepository,
+                          TokenService tokenService) {
+        this.patientRepository = patientRepository;
+        this.appointmentRepository = appointmentRepository;
+        this.tokenService = tokenService;
+    }
+
+
+
+    public int createPatient(Patient patient) {
+        try {
+            patientRepository.save(patient);
+            return 1;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 0;
+        }
+    }
+
+
+    @Transactional
+    public ResponseEntity<Map<String, Object>> getPatientAppointment(Long id, String token) {
+        Map<String, Object> result = new HashMap<>();
+        String email = tokenService.extractIdentifier(token);
+
+        Patient patient = patientRepository.findByEmail(email);
+        if (patient == null || !Objects.equals(patient.getId(), id)) {
+            result.put("message", "Unauthorized or patient ID mismatch");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(result);
+        }
+
+        List<AppointmentDTO> dtos = appointmentRepository.findByPatientId(id)
+            .stream()
+            .map(AppointmentDTO::from)
+            .collect(Collectors.toList());
+
+
+
+        // List<Appointment> appointments = appointmentRepository.findByPatientId(id);
+        // List<AppointmentDTO> dtos = new ArrayList<>();
+
+        // for (Appointment appointment : appointments) {
+        //     dtos.add(AppointmentDTO.from(appointment));
+        // }
+
+
+        // List<AppointmentDTO> dtos = appointmentRepository.findByPatientId(id)
+        //     .stream()
+        //     .collect(Collectors.mapping(AppointmentDTO::from, Collectors.toList()));
+
+        result.put("appointments", dtos);
+        return ResponseEntity.ok(result);
+    }
+
+    @Transactional
+    public ResponseEntity<Map<String, Object>> filterByCondition(String condition, Long id) {
+        Map<String, Object> result = new HashMap<>();
+        List<Appointment> appts;
+
+        if ("past".equalsIgnoreCase(condition)) {
+            appts = appointmentRepository.findByPatient_IdAndStatusOrderByAppointmentTimeAsc(id, 1);
+        } else if ("future".equalsIgnoreCase(condition)) {
+            appts = appointmentRepository.findByPatient_IdAndStatusOrderByAppointmentTimeAsc(id, 0);
+        } else {
+            result.put("message", "Invalid condition. Use 'past' or 'future'");
+            return ResponseEntity.badRequest().body(result);
+        }
+
+        List<AppointmentDTO> dtos = appts.stream().map(AppointmentDTO::from).collect(Collectors.toList());
+        result.put("appointments", dtos);
+        return ResponseEntity.ok(result);
+    }
+
+    @Transactional
+    public ResponseEntity<Map<String, Object>> filterByDoctor(String name, Long patientId) {
+        Map<String, Object> result = new HashMap<>();
+        List<AppointmentDTO> dtos = appointmentRepository
+                .filterByDoctorNameAndPatientId(name, patientId)
+                .stream()
+                .map(AppointmentDTO::from)
+                .collect(Collectors.toList());
+
+        result.put("appointments", dtos);
+        return ResponseEntity.ok(result);
+    }
+
+    @Transactional
+    public ResponseEntity<Map<String, Object>> filterByDoctorAndCondition(String condition, String name, Long patientId) {
+        Map<String, Object> result = new HashMap<>();
+        List<Appointment> appts;
+
+        if ("past".equalsIgnoreCase(condition)) {
+            appts = appointmentRepository
+                    .filterByDoctorNameAndPatientIdAndStatus(name, patientId, 1);
+        } else if ("future".equalsIgnoreCase(condition)) {
+            appts = appointmentRepository
+                    .filterByDoctorNameAndPatientIdAndStatus(name, patientId, 0);
+        } else {
+            result.put("message", "Invalid condition. Use 'past' or 'future'");
+            return ResponseEntity.badRequest().body(result);
+        }
+
+        List<AppointmentDTO> dtos = appts.stream().map(AppointmentDTO::from).collect(Collectors.toList());
+        result.put("appointments", dtos);
+        return ResponseEntity.ok(result);
+    }
+
+    public ResponseEntity<Map<String, Object>> getPatientDetails(String token) {
+        Map<String, Object> result = new HashMap<>();
+        String email = tokenService.extractIdentifier(token);
+
+        Patient opt = patientRepository.findByEmail(email);
+        if (opt == null) {
+            result.put("message", "Patient not found");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(result);
+        }
+
+        result.put("patient", opt);
+        return ResponseEntity.ok(result);
+    }
+
+
 
 
 

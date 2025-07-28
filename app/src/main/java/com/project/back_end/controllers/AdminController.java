@@ -1,6 +1,21 @@
 
 package com.project.back_end.controllers;
 
+import java.util.Map;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.project.back_end.models.Admin;
+import com.project.back_end.services.CentralService;
+
+// @RestController
+// @RequestMapping("${api.path}admin")
+@RestController
+@RequestMapping("${api.path}admin")
 public class AdminController {
 
 // 1. Set Up the Controller Class:
@@ -21,6 +36,20 @@ public class AdminController {
 //    - Delegates authentication logic to the `validateAdmin` method in the service layer.
 //    - Returns a `ResponseEntity` with a `Map` containing login status or messages.
 
+
+    private final CentralService centralService;
+
+    // 2. Constructor-based Dependency Injection
+    
+    public AdminController(CentralService centralService) {
+        this.centralService = centralService;
+    }
+
+    // 3. Admin Login Endpoint
+    @PostMapping("/login")
+    public ResponseEntity<Map<String, String>> adminLogin(@RequestBody Admin admin) {
+        return centralService.validateAdmin(admin);
+    }
 
 
 }

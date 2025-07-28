@@ -109,82 +109,110 @@ with search, filter, and modal functionality.
 <!-- adminDashboard.html -->
 
  <!DOCTYPE html>
-
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
-        <head>
-            <meta charset="UTF-8">
-            <!-- <link rel="icon" type="image/png" th:href="@{/assets/images/logo/logo.png}" />`. -->
-            <link rel="icon" type="image/png" th:href="@{/assets/images/logo/logo.png}" />
+<head>
+  <meta charset="UTF-8">
+  <link rel="icon" type="image/png" th:href="@{/assets/images/logo/logo.png}" />
 
-            <title>Admin Dashboard</title>
-            <link rel="stylesheet" th:href="@{/assets/css/adminDashboard.css}">
-            <link rel="stylesheet" th:href="@{/assets/css/style.css}">
-            <script th:src="@{/js/render.js}" defer></script>
-            <script th:src="@{/js/util.js}" defer></script>
-            <script th:src="@{/js/components/header.js}" defer></script>
-            <script th:src="@{/js/components/footer.js}" defer></script>
+  <title>Admin Dashboard</title>
+  <link rel="stylesheet" th:href="@{/assets/css/adminDashboard.css}">
+  <link rel="stylesheet" th:href="@{/assets/css/style.css}">
 
-        </head>
+  <script type="module" th:src="@{/js/render.js}" defer></script>
+  <script type="module" th:src="@{/js/util.js}" defer></script>
+  <script type="module" th:src="@{/js/components/header.js}" defer></script>
+  <script type="module" th:src="@{/js/components/footer.js}" defer></script>
+</head>
 
+<body onload="renderContent()">
+  <div class="container">
+    <div class="wrapper">
+      <!-- Dynamic Header -->
+      <div id="header"></div>
 
+      <main class="main-content">
+        <!-- Add Doctor Button -->
+        <button id="addDoctorBtn" class="add-doctor-button">+ Add Doctor</button>
 
-        <body onload="renderContent()">
-            <div class="container">
-                <div class="wrapper">
-                    <!-- Dynamic Header -->
-                    <div id="header"></div>
+        <!-- Search Bar -->
+        <input type="text" id="searchBar" placeholder="Search by doctor name" aria-label="Search doctors" />
 
-                    <main class="main-content">
-                        <!-- Search Bar -->
-                        <!-- <input type="text" id="searchBar" placeholder="search by doctor name" /> -->
-                        <input type="text" id="searchBar" placeholder="Search by doctor name" aria-label="Search doctors" />
+        <!-- Filter Section -->
+        <div class="filter-section">
+          <select id="timeFilter">
+            <option value="">Sort by Time</option>
+            <option value="AM">AM</option>
+            <option value="PM">PM</option>
+          </select>
 
-                        <!-- Filter Section -->
-                        <div class="filter-section">
-                            <select id="timeFilter">
-                                <option value="">Sort by Time</option>
-                                <option value="AM">AM</option>
-                                <option value="PM">PM</option>
-                            </select>
-                            <select id="specialtyFilter">
-                                <option value="">Filter by Specialty</option>
-                                <option value="Cardiologist">Cardiologist</option>
-                                <option value="Dentist">Dentist</option>
-                                <option value="Dermatologist">Dermatologist</option>
-                                <option value="Pediatrician">Pediatrician</option>
-                                <option value="General">General</option>
-                                <!-- Add more specialties as needed -->
-                            </select>
-                        </div>
+          <select id="specialtyFilter">
+            <option value="">Filter by Specialty</option>
+            <option value="Cardiologist">Cardiologist</option>
+            <option value="Dentist">Dentist</option>
+            <option value="Dermatologist">Dermatologist</option>
+            <option value="Pediatrician">Pediatrician</option>
+            <option value="General">General</option>
+          </select>
+        </div>
 
-                        <!-- Dynamic Content Area -->
-                        <div id="content"></div>
-                    </main>
+        <!-- Doctor Cards Area -->
+        <div id="content"></div>
+      </main>
 
-                    <!-- Dynamic Footer -->
-                    <div id="footer"></div>
-                </div>
-            </div>
+      <!-- Footer -->
+      <div id="footer"></div>
+    </div>
+  </div>
 
-            <div id="modal" class="modal">
-                <span id="closeModal" class="close">&times;</span>
-                <div id="modal-body"></div>
-            </div>
+  <!-- Modal -->
+  <div id="modal" class="modal">
+    <span id="closeModal" class="close">&times;</span>
+    <div id="modal-body"></div>
+  </div>
 
+  <!-- JS Logic -->
+  <script type="module" th:src="@{/js/adminDashboard.js}" defer></script>
+  <script type="module" th:src="@{/js/components/doctorCard.js}" defer></script>
 
-            <!-- <script type="module" src="../js/services/adminDashboard.js" defer></script>
-            <script type="module" src="../js/components/doctorCard.js" defer></script> -->
-            <!-- <script type="module" src="../../static/js/adminDashboard.js" defer></script>
-            <script type="module" src="../../static/js/doctorDashboard.js" defer></script> -->
-            <!-- <script type="module" th:src="@{/js/adminDashboard.js}" defer></script>
-            <script type="module" th:src="@{/js/doctorDashboard.js}" defer></script> -->
-            <script type="module" src="../js/services/adminDashboard.js" defer></script>
-            <script type="module" src="../js/components/doctorCard.js" defer></script>
+  <!-- Optional: Inline styling for the Add Doctor button -->
+  <style>
+    .add-doctor-button {
+      background-color: #1e88e5;
+      color: white;
+      padding: 10px 20px;
+      margin: 10px 0;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
 
+    .add-doctor-button:hover {
+      background-color: #1565c0;
+    }
 
-        </body>
+    .modal .input-field {
+      width: 100%;
+      padding: 8px;
+      margin: 6px 0;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
 
+    #saveDoctorBtn {
+      background-color: #4caf50;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
 
- </html>
+    #saveDoctorBtn:hover {
+      background-color: #388e3c;
+    }
+  </style>
+</body>
 
+</html>

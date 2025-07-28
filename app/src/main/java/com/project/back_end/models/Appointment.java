@@ -98,7 +98,7 @@ public class Appointment {
       @Transient
       private LocalDate getAppointmentDate(){
         if (appointmentTime == null) return null;
-          return appointmentTime.toLocalDate();
+        return appointmentTime.toLocalDate();
       }
 
 // 8. 'getAppointmentTimeOnly' method:
@@ -106,9 +106,10 @@ public class Appointment {
 //    - Description:
 //      - This method extracts only the time part from the appointmentTime field.
 //      - It returns a LocalTime object representing just the time (without the date) of the scheduled appointment.
+      @Transient
       private LocalTime getAppointmentTimeOnly(){
         if (appointmentTime == null) return null;
-          return appointmentTime.toLocalTime();
+        return appointmentTime.toLocalTime();
       }
 
 // 9. Constructor(s):

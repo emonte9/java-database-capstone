@@ -1,14 +1,14 @@
 package com.project.back_end.mvc;
 
-import java.util.Map;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.servlet.view.RedirectView;
 
 import com.project.back_end.services.TokenService;
 
+@Controller
 public class DashboardController {
 
 // 1. Set Up the MVC Controller Class:
@@ -41,9 +41,9 @@ public class DashboardController {
 
     @GetMapping("/adminDashboard/{token}")
     public Object adminDashboard(@PathVariable String token) {
-        Map<String, Object> result = tokenValidationService.validateToken(token, "admin");
+        boolean result = tokenValidationService.validateToken(token, "admin");
 
-        if (result.isEmpty()) {
+        if (result) {
             // Token is valid for admin
             return "admin/adminDashboard";
         } else {
@@ -54,9 +54,9 @@ public class DashboardController {
 
     @GetMapping("/doctorDashboard/{token}")
     public Object doctorDashboard(@PathVariable String token) {
-        Map<String, Object> result = tokenValidationService.validateToken(token, "doctor");
+        boolean result = tokenValidationService.validateToken(token, "doctor");
 
-        if (result.isEmpty()) {
+        if (result) {
             // Token is valid for doctor
             return "doctor/doctorDashboard";
         } else {
@@ -66,4 +66,6 @@ public class DashboardController {
 
 
 
+
+    // check this
 }

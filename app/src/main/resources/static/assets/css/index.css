@@ -73,13 +73,28 @@ html, body {
 }
 
 /* Header */
-#header {
+/* #header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 24px 40px;
-  background: #fff;
-  border-bottom: 1px solid #e0e0e0;
+  /* justify-content: space-between; */
+  /* padding: 24px 40px; */
+  /* background: #fff;
+  border-bottom: 1px solid #e0e0e0; */
+/* }  */
+
+
+/* Section Heading */
+h2 {
+  font-size: 32px;
+  font-weight: bold;
+  margin-bottom: 50px;
+  color: #003e3e;
+}
+
+
+#header,
+#footer {
+  border: 2px dashed red; /* Debugging only */
 }
 
 /* Main Content Area */
@@ -159,6 +174,10 @@ button:hover {
   font-size: 28px;
   color: #015c5d;
   cursor: pointer;
+     /* Tight vertical space */
+  line-height: 1;
+  width: auto; /* Let it size naturally */
+  height: auto;
   transition: color 0.2s;
 }
 .close-btn:hover {
@@ -166,7 +185,7 @@ button:hover {
 }
 
 /* Footer */
-#footer {
+/* #footer {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -175,9 +194,9 @@ button:hover {
   border-top: 1px solid #e0e0e0;
   font-size: 16px;
   color: #015c5d;
-}
+} */
 
-@media (max-width: 600px) {
+/* @media (max-width: 600px) {
   #header, #footer {
     flex-direction: column;
     align-items: flex-start;
@@ -193,7 +212,7 @@ button:hover {
     width: 100%;
     font-size: 15px;
   }
-}
+} */
 
 /* Dashboard button (if used elsewhere) */
 .dashboard-btn {

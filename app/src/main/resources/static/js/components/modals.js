@@ -1,5 +1,22 @@
+
+import { 
+  adminLoginHandler, 
+  doctorLoginHandler 
+} from '../services/index.js';  // adjust the path if needed
+
+
+// import { 
+//   adminLoginHandler, 
+//   doctorLoginHandler, 
+//   signupPatient, 
+//   loginPatient, 
+//   adminAddDoctor 
+// } from '../services/index.js';
+
+
 // modals.js
 export function openModal(type) {
+  console.log("hello world")
   let modalContent = '';
   if (type === 'addDoctor') {
     modalContent = `

@@ -116,9 +116,11 @@ and triggers modal-based login functionality.
             <link rel="stylesheet" href="./assets/css/index.css">
             <link rel="stylesheet" href="./assets/css/style.css">
             <script src="./js/util.js" defer></script>
-            <script src="./js/render.js" defer></script>
-            <script src="./js/components/header.js" defer></script>
-            <script src="./js/components/footer.js" defer></script>
+            <script type="module" src="./js/render.js" defer></script>
+           
+            <!-- app/src/main/resources/static/js/render.js -->
+            <script type="module" src="./js/components/header.js" defer></script>
+            <script type="module" src="./js/components/footer.js" defer></script>
         </head>
 
 
@@ -132,9 +134,12 @@ and triggers modal-based login functionality.
                     <!-- Main Content -->
                     <main class="main-content">
                         <h2>Select Your Role</h2>
-                        <button id="admin-btn" onclick="selectRole('admin')">Admin</button>
+                        <!-- <button id="admin-btn" onclick="selectRole('admin')">Admin</button>
                         <button id="doctor-btn" onclick="selectRole('doctor')">Doctor</button>
-                        <button id="patient-btn" onclick="selectRole('patient')">Patient</button>
+                        <button id="patient-btn" onclick="selectRole('patient')">Patient</button> -->
+                        <button id="admin-btn">Admin</button>
+                        <button id="doctor-btn">Doctor</button>
+                        <button id="patient-btn">Patient</button>
                     </main>
 
                     <!-- Footer Placeholder -->
@@ -151,7 +156,8 @@ and triggers modal-based login functionality.
             </div>
 
             <!-- Page-Specific Logic Module -->
-            <script type="module" src="../js/services/index.js" defer></script>
+            <!-- <script type="module" src="../js/services/index.js" defer></script> -->
+             <script type="module" src="../js/services/index.js" defer></script>
 
 
         </body>

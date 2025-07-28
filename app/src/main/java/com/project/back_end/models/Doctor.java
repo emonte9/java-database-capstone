@@ -4,11 +4,14 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Transient;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
@@ -63,6 +66,7 @@ public class Doctor {
 //      - The @Email annotation validates that the email address follows a valid email format (e.g., doctor@example.com).
     @NotNull(message = "email cannot be null")
     @Email
+    @Column(unique = true) 
     private String email;
 
 // 5. 'password' field:
@@ -96,7 +100,8 @@ public class Doctor {
 //      - The @ElementCollection annotation ensures that the list of time slots is stored as a separate collection in the database.
 
     
-    @ElementCollection
+    // @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     private List<String> availableTimes;
 
 // 8. Getters and Setters:
@@ -157,6 +162,21 @@ public class Doctor {
     public void setAvailableTimes(List<String> availableTimes) {
         this.availableTimes = availableTimes;
     }
+
+
+
+    @Transient
+    private String timeOfDay;
+
+    public String getTimeOfDay() {
+        return timeOfDay;
+    }
+
+    public void setTimeOfDay(String timeOfDay) {
+        this.timeOfDay = timeOfDay;
+    }
+
+    
 
 
 }

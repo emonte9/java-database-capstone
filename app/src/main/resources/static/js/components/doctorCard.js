@@ -64,14 +64,24 @@ export function createDoctorCard(doctor) {
   const name = document.createElement("h3");
   name.textContent = doctor.name;
 
+  // const specialization = document.createElement("p");
+  // specialization.textContent = `Specialization: ${doctor.specialization}`;
   const specialization = document.createElement("p");
-  specialization.textContent = `Specialization: ${doctor.specialization}`;
+  specialization.textContent = `Specialization: ${doctor.specialty || "Not specified"}`;
 
   const email = document.createElement("p");
   email.textContent = `Email: ${doctor.email}`;
 
   const availability = document.createElement("p");
-  availability.textContent = `Available: ${doctor.availability.join(", ")}`;
+  // availability.textContent = `Available: ${doctor.availability.join(", ")}`;
+  // availability.textContent = `Available: ${Array.isArray(doctor.availability) ? doctor.availability.join(", ") : "Not available"}`;
+
+  availability.textContent = `Available: ${
+  Array.isArray(doctor.availableTimes) && doctor.availableTimes.length > 0
+    ? doctor.availableTimes.join(", ")
+    : "Not available"
+}`;
+
 
   infoDiv.appendChild(name);
   infoDiv.appendChild(specialization);
@@ -148,9 +158,37 @@ export function createDoctorCard(doctor) {
     actionsDiv.appendChild(bookNow);
   }
 
+//   // === Show Book Now Button to Everyone ===
+// const bookNow = document.createElement("button");
+// bookNow.textContent = "Book Now";
+// bookNow.classList.add("primary-btn");
+
+// bookNow.addEventListener("click", async (e) => {
+//   const token = localStorage.getItem("token");
+//   const userRole = localStorage.getItem("userRole");
+
+//   if (!token || userRole !== "loggedPatient") {
+//     alert("Please log in as a patient to book an appointment.");
+//     return;
+//   }
+
+//   try {
+//     const patientData = await getPatientData(token);
+//     showBookingOverlay(e, doctor, patientData);
+//   } catch (err) {
+//     console.error(err);
+//     alert("Could not load patient data for booking.");
+//   }
+// });
+
+// actionsDiv.appendChild(bookNow);
+
   // Final card assembly
   card.appendChild(infoDiv);
   card.appendChild(actionsDiv);
 
+  console.log('Doctor data:', doctor);
+  console.log('Availability text:', availability.textContent);
+  console.log(card.outerHTML);
   return card;
 }

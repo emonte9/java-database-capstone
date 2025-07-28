@@ -2,6 +2,7 @@ package com.project.back_end.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -34,6 +35,7 @@ public class Admin {
 //      - Used to log into the system.
 //      - @NotNull validation ensures that this field cannot be null when creating or updating an Admin.
     @NotNull(message= "username cannot be null")
+    @Column(unique = true)
     private String username;
 
 // 3. 'password' field:

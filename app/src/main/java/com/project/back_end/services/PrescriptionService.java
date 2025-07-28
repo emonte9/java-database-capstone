@@ -1,5 +1,17 @@
 package com.project.back_end.services;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+
+import com.project.back_end.models.Prescription;
+import com.project.back_end.repo.PrescriptionRepository;
+
+@Service
 public class PrescriptionService {
     
  // 1. **Add @Service Annotation**:
@@ -30,5 +42,54 @@ public class PrescriptionService {
 //    - If an error occurs, the method logs the error and returns an HTTP `500 Internal Server Error` response with a corresponding error message.
 //    - Instruction: Ensure that all potential exceptions are handled properly, and meaningful responses are returned to the client.
 
+
+    private final PrescriptionRepository prescriptionRepository;
+
+
+    // Constructor injection
+    public PrescriptionService(PrescriptionRepository prescriptionRepository) {
+        this.prescriptionRepository = prescriptionRepository;
+    }
+
+    // Save a new prescription
+    public ResponseEntity<Map<String, String>> savePrescription(Prescription prescription) {
+        Map<String, String> response = new HashMap<>();
+        try {
+            // Check for existing prescription for the appointment
+            if (prescriptionRepository.findByAppointmentId(prescription.getAppointmentId()) != null) {
+                response.put("message", "Prescription already exists for this appointment");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+            }
+
+            // Save if no existing prescription
+            prescriptionRepository.save(prescription);
+            response.put("message", "Prescription saved");
+            return ResponseEntity.status(HttpStatus.CREATED).body(response);
+
+        } catch (Exception e) {
+            response.put("error", "An error occurred while saving the prescription");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+
+    // Retrieve prescription by appointment ID
+    public ResponseEntity<Map<String, Object>> getPrescription(Long appointmentId) {
+        Map<String, Object> result = new HashMap<>();
+        try {
+            List<Prescription> prescriptions = prescriptionRepository.findByAppointmentId(appointmentId);
+            if (prescriptions == null || prescriptions.isEmpty()) {
+                result.put("message", "No prescription found for this appointment");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(result);
+            }
+
+            // result.put("prescription", prescriptions.get(0));
+            result.put("prescription", prescriptions);
+            return ResponseEntity.ok(result);
+
+        } catch (Exception e) {
+            result.put("error", "An error occurred while retrieving the prescription");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(result);
+        }
+    }
 
 }

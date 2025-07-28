@@ -81,13 +81,13 @@
     color:#A62B1F;
   }
 /* Footer Section */
-.footer {
+ .footer {
     background-color: #f4f4f4;
     color: #fff;
     padding: 40px 20px;
     border-top: 2px solid #f4f4f4;
     
-  }
+  } 
   
   .footer-container {
     display: flex;
@@ -258,6 +258,15 @@
     box-shadow: 0 4px 6px rgba(0,0,0,0.1);
     transition: transform 0.2s ease;
   }
+
+
+  /* .doctor-info p {
+  color: red !important;
+  font-weight: bold;
+  background-color: yellow !important;
+  display: block !important;
+  visibility: visible !important;
+} */
   
   .doctor-card:hover {
     transform: scale(1.02);

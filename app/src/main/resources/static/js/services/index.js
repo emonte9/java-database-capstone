@@ -63,11 +63,29 @@
 
 import { openModal } from '../components/modals.js';
 import { API_BASE_URL } from '../config/config.js';
-import { setRole } from '../render.js';
+import { setRole,selectRole } from '../render.js';
+
+
+// export * from './auth.js';
+// export * from './doctor.js';
+// export * from './patient.js';
 
 // API endpoints
-const ADMIN_API = `${API_BASE_URL}/admin`;
-const DOCTOR_API = `${API_BASE_URL}/doctor/login`;
+// const ADMIN_API = `${API_BASE_URL}/admin`;
+// const ADMIN_API = `${API_BASE_URL}/api/admin/login`;
+// const ADMIN_API = `${API_BASE_URL}/admin/login`;
+// const ADMIN_API = `${API_BASE_URL}/admin/login`;
+// const DOCTOR_API = `${API_BASE_URL}/doctor/login`;
+const DOCTOR_API = `${API_BASE_URL}/api/doctor/login`;
+const ADMIN_API = `${API_BASE_URL}/api/admin/login`;
+
+
+
+window.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("admin-btn")?.addEventListener("click", () => selectRole("admin"));
+  document.getElementById("doctor-btn")?.addEventListener("click", () => selectRole("doctor"));
+  document.getElementById("patient-btn")?.addEventListener("click", () => selectRole("patient"));
+});
 
 window.onload = function () {
   const adminBtn = document.getElementById('admin-btn');
@@ -75,6 +93,7 @@ window.onload = function () {
 
   if (adminBtn) {
     adminBtn.addEventListener('click', () => openModal('adminLogin'));
+    console.log("hello")
   }
 
   if (doctorBtn) {
