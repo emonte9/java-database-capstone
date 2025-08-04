@@ -103,11 +103,86 @@ if (datePicker) {
 }
 
 // 6. Define function to load appointments
+// async function loadAppointments() {
+//   try {
+//     const appointments = await getAllAppointments(selectedDate, patientName, token);
+
+//     // Clear previous rows
+//     appointmentTableBody.innerHTML = '';
+
+//     if (!appointments || appointments.length === 0) {
+//       appointmentTableBody.innerHTML = `
+//         <tr>
+//           <td colspan="4">No Appointments found for today.</td>
+//         </tr>
+//       `;
+//       return;
+//     }
+
+//     appointments.forEach(appointment => {
+//       const patient = {
+//         id: appointment.patient.id,
+//         name: appointment.patient.name,
+//         phone: appointment.patient.phone,
+//         email: appointment.patient.email,
+//       };
+//       const row = createPatientRow(patient);
+//       appointmentTableBody.appendChild(row);
+//     });
+//   } catch (error) {
+//     console.error('Error fetching appointments:', error);
+//     appointmentTableBody.innerHTML = `
+//       <tr>
+//         <td colspan="4">Error loading appointments. Try again later.</td>
+//       </tr>
+//     `;
+//   }
+// }
+
+
+// async function loadAppointments() {
+//   try {
+//     const appointments = await getAllAppointments(selectedDate, patientName, token);
+
+    
+//     if (!Array.isArray(appointments)) {
+//       console.error("Expected array, got:", appointments);
+//       appointmentTableBody.innerHTML = `
+//         <tr><td colspan="4">Error: Invalid response from server.</td></tr>
+//       `;
+//       return;
+//     }
+
+    
+//     appointmentTableBody.innerHTML = '';
+//     if (appointments.length === 0) {
+//       appointmentTableBody.innerHTML = `
+//         <tr><td colspan="4">No appointments found for today.</td></tr>
+//       `;
+//       return;
+//     }
+
+//     appointments.forEach(appointment => {
+//       const patient = appointment.patient;
+//       const row = createPatientRow(patient);
+//       appointmentTableBody.appendChild(row);
+//     });
+
+//   } catch (error) {
+//     console.error('Error fetching appointments:', error);
+//     appointmentTableBody.innerHTML = `
+//       <tr><td colspan="4">Error loading appointments. Try again later.</td></tr>
+//     `;
+//   }
+// }
+
+
 async function loadAppointments() {
   try {
-    const appointments = await getAllAppointments(selectedDate, patientName, token);
+    const response = await getAllAppointments(selectedDate, patientName, token);
 
-    // Clear previous rows
+    const appointments = Array.isArray(response) ? response : response.appointments;
+
     appointmentTableBody.innerHTML = '';
 
     if (!appointments || appointments.length === 0) {
@@ -129,6 +204,7 @@ async function loadAppointments() {
       const row = createPatientRow(patient);
       appointmentTableBody.appendChild(row);
     });
+
   } catch (error) {
     console.error('Error fetching appointments:', error);
     appointmentTableBody.innerHTML = `
@@ -138,6 +214,7 @@ async function loadAppointments() {
     `;
   }
 }
+
 
 // 7. Load initial data when page loads
 document.addEventListener('DOMContentLoaded', () => {

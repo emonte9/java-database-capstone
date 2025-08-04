@@ -177,14 +177,30 @@ import { selectRole } from './render.js';
 // });
 
 
-document.addEventListener('DOMContentLoaded', () => {
-  const btn = document.getElementById('addDocBtn');
-  btn?.addEventListener('click', () => openModal('addDoctor'));
+// document.addEventListener('DOMContentLoaded', () => {
+//   const btn = document.getElementById('addDocBtn');
+//   btn?.addEventListener('click', () => openModal('addDoctor'));
   
-  const search = document.getElementById('searchBar');
-  search?.addEventListener('input', filterDoctorsOnChange);
-  document.getElementById('filterTime')?.addEventListener('change', filterDoctorsOnChange);
-  document.getElementById('filterSpecialty')?.addEventListener('change', filterDoctorsOnChange);
+//   const search = document.getElementById('searchBar');
+//   search?.addEventListener('input', filterDoctorsOnChange);
+//   document.getElementById('filterTime')?.addEventListener('change', filterDoctorsOnChange);
+//   document.getElementById('filterSpecialty')?.addEventListener('change', filterDoctorsOnChange);
+
+//   loadDoctorCards();
+// });
+
+
+document.addEventListener('DOMContentLoaded', () => {
+  // const contentDiv = document.getElementById('content');
+  // if (!contentDiv) {
+  //   console.warn("Not on admin dashboard page skipping doctor card logic.");
+  //   return;
+  // }
+
+  document.getElementById('addDocBtn')?.addEventListener('click', () => openModal('addDoctor'));
+  document.getElementById("searchBar")?.addEventListener("input", filterDoctorsOnChange);
+  document.getElementById("filterTime")?.addEventListener("change", filterDoctorsOnChange);
+  document.getElementById("filterSpecialty")?.addEventListener("change", filterDoctorsOnChange);
 
   loadDoctorCards();
 });
@@ -192,28 +208,54 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
+
 // Load and render doctor cards
 async function loadDoctorCards() {
   const contentDiv = document.getElementById("content");
-  // contentDiv.innerHTML = "<p>Loading doctors...</p>";
+  if (!contentDiv) {
+    console.warn("⚠️ #content element not found. Skipping doctor rendering.");
+    return;
+  }
 
   try {
     const doctors = await getDoctors();
-    if (doctors.length === 0) {
+    if (!doctors || doctors.length === 0) {
       contentDiv.innerHTML = "<p>No doctors available.</p>";
       return;
     }
 
     renderDoctorCards(doctors);
   } catch (error) {
-    // contentDiv.innerHTML = "<p>Error loading doctors.</p>";
     console.error("Failed to load doctors:", error);
   }
 }
 
+// async function loadDoctorCards() {
+//   const contentDiv = document.getElementById("content");
+//   // contentDiv.innerHTML = "<p>Loading doctors...</p>";
+
+//   try {
+//     const doctors = await getDoctors();
+//     if (doctors.length === 0) {
+//       contentDiv.innerHTML = "<p>No doctors available.</p>";
+//       return;
+//     }
+
+//     renderDoctorCards(doctors);
+//   } catch (error) {
+//     // contentDiv.innerHTML = "<p>Error loading doctors.</p>";
+//     console.error("Failed to load doctors:", error);
+//   }
+// }
+
 // Utility function to render cards
 function renderDoctorCards(doctors) {
   const contentDiv = document.getElementById("content");
+  if (!contentDiv) {
+    console.warn("⚠️ #content not found during render.");
+    return;
+  }
+
   contentDiv.innerHTML = "";
 
   doctors.forEach(doctor => {
@@ -221,6 +263,16 @@ function renderDoctorCards(doctors) {
     contentDiv.appendChild(card);
   });
 }
+
+// function renderDoctorCards(doctors) {
+//   const contentDiv = document.getElementById("content");
+//   contentDiv.innerHTML = "";
+
+//   doctors.forEach(doctor => {
+//     const card = createDoctorCard(doctor);
+//     contentDiv.appendChild(card);
+//   });
+// }
 
 
 // async function loadDoctorCards() {

@@ -15,6 +15,7 @@ import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotNull;
 
 
+
 @Entity
 public class Appointment {
 

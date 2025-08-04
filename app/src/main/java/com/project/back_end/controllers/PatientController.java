@@ -90,11 +90,16 @@ public class PatientController {
     // public ResponseEntity<?> getPatientDetails(@PathVariable String token) {
     //     return patientService.getPatientDetails(token);
     // }
+    // @GetMapping
+    // public ResponseEntity<?> getPatientDetails(@RequestHeader("Authorization") String authHeader) {
+    //     String token = authHeader.replace("Bearer ", "");
+    //     return patientService.getPatientDetails(token);
+    // }
     @GetMapping
-    public ResponseEntity<?> getPatientDetails(@RequestHeader("Authorization") String authHeader) {
-        String token = authHeader.replace("Bearer ", "");
-        return patientService.getPatientDetails(token);
-    }
+public ResponseEntity<?> getPatientDetails(@RequestHeader("Authorization") String authHeader) {
+    String token = authHeader.replace("Bearer ", "");
+    return patientService.getPatientDetails(token);
+}
 
     // @GetMapping("/me")
     // public ResponseEntity<?> getPatientDetails(@PathVariable String token) {
@@ -143,43 +148,11 @@ public ResponseEntity<?> getPatientDetailsFromHeader(
                     .body(Map.of("error", "Internal server error"));
         }
     }
-    // public ResponseEntity<?> createPatient(@RequestBody Patient patient) {
-    //     try {
-    //         boolean valid = centralService.validatePatient(patient);
-    //         if (!valid) {
-    //             return ResponseEntity.status(409)
-    //                     .body(java.util.Map.of("error", "Patient with email id or phone no already exist"));
-    //         }
-
-    //             int created = patientService.createPatient(patient);
-    //             if (created == 1) {
-    //                 return ResponseEntity.status(201)
-    //                         .body(Map.of("message", "Signup successful"));
-    //             } else {
-    //                 return ResponseEntity.status(500)
-    //                         .body(Map.of("error", "Internal server error"));
-    //             }
-    //         } catch (Exception e) {
-    //             return ResponseEntity.status(500)
-    //                     .body(Map.of("error", "Internal server error"));
-    //         }
-    // }
+  
 
 
 
-    // // 3. Patient Login
-    // @PostMapping("/login")
-    // public ResponseEntity<?> login(@RequestBody Login login) {
-    //     return centralService.validatePatientLogin(login);
-    // }
-
-
-//     @PostMapping("/login")
-// public ResponseEntity<?> login(@RequestBody Login login) {
-//   // Bypass your service entirely
-//   return ResponseEntity.ok(Map.of("token", "dummy-token"));
-// }
-
+  
 @PostMapping("/login")
 public ResponseEntity<?> login(@RequestBody Login login) {
   System.out.println("▶︎ Login.payload: " 
@@ -187,16 +160,7 @@ public ResponseEntity<?> login(@RequestBody Login login) {
   return centralService.validatePatientLogin(login);
 }
 
-// @PostMapping("/login")
-// public ResponseEntity<?> login(@RequestBody Login login) {
-//   // Temporary: always succeed for a known test user
-//   if ("test@foo.com".equals(login.getEmail()) 
-//       && "secret".equals(login.getPassword())) {
-//     return ResponseEntity.ok(Map.of("token", "hardcoded123"));
-//   }
-//   return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-//                        .body(Map.of("error","Invalid credentials"));
-// }
+
     // 4. Get Patient Appointments
     @GetMapping("/{id}/{token}")
     public ResponseEntity<?> getPatientAppointments(
@@ -233,51 +197,7 @@ public ResponseEntity<?> login(@RequestBody Login login) {
     return patientService.getPatientAppointment(id, token);
 }
 
-    // 5. Filter Patient Appointments
-    // @GetMapping("/filter/{condition}/{name}/{token}")
-    // public ResponseEntity<?> filterAppointments(
-    //         @PathVariable String condition,
-    //         @PathVariable String name,
-    //         @PathVariable String token) {
-
-    //     if (!tokenService.validateToken(token, "patient")) {
-    //         Map<String, String> result = new HashMap<>();
-    //         result.put("error", "Invalid or expired token");
-    //         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(result);
-    //     }
-            
-    //     return centralService.filterPatient(condition, name, token);
-    // }
-
-//     @GetMapping("/appointments/filter")
-//     public ResponseEntity<?> filterAppointments(
-//         @RequestParam String condition,
-//         @RequestParam String name,
-//         @RequestHeader("Authorization") String authHeader) {
-
-//     String token = authHeader.replace("Bearer ", "");
-
-//     if (!tokenService.validateToken(token, "patient")) {
-//         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-//             .body(Map.of("error", "Invalid or expired token"));
-//     }
-
-//     return centralService.filterPatient(condition, name, token);
-// }
-
-// @GetMapping("/filter/{condition}/{name}/{token}")
-// public ResponseEntity<?> filterAppointments(
-//     @PathVariable String condition,
-//     @PathVariable String name,
-//     @PathVariable String token) {
-
-//     if (!tokenService.validateToken(token, "patient")) {
-//         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-//             .body(Map.of("error", "Invalid or expired token"));
-//     }
-
-//     return centralService.filterPatient(condition, name, token);
-// }
+  
 
 
 @GetMapping("/appointments/filter")

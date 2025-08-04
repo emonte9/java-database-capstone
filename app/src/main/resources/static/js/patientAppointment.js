@@ -15,16 +15,36 @@ document.addEventListener("DOMContentLoaded", initializePage);
 
 document.addEventListener("DOMContentLoaded", () => {
   const searchBar = document.getElementById("searchBar");
-  const appointmentFilter = document.getElementById("appointmentFilter");
+  const filter = document.getElementById("appointmentFilter");
 
   if (searchBar) {
     searchBar.addEventListener("input", handleFilterChange);
+  } else {
+    console.warn("⚠️ #searchBar not found.");
   }
 
-  if (appointmentFilter) {
-    appointmentFilter.addEventListener("change", handleFilterChange);
+  if (filter) {
+    filter.addEventListener("change", handleFilterChange);
+  } else {
+    console.warn("⚠️ #appointmentFilter not found.");
   }
+
+  initializePage(); // if this function fetches data and starts rendering
 });
+
+
+// document.addEventListener("DOMContentLoaded", () => {
+//   const searchBar = document.getElementById("searchBar");
+//   const appointmentFilter = document.getElementById("appointmentFilter");
+
+//   if (searchBar) {
+//     searchBar.addEventListener("input", handleFilterChange);
+//   }
+
+//   if (appointmentFilter) {
+//     appointmentFilter.addEventListener("change", handleFilterChange);
+//   }
+// });
 
 async function initializePage() {
   try {
@@ -101,8 +121,8 @@ function redirectToUpdatePage(appointment) {
 
 
 // Search and Filter Listeners
-document.getElementById("searchBar").addEventListener("input", handleFilterChange);
-document.getElementById("appointmentFilter").addEventListener("change", handleFilterChange);
+// document.getElementById("searchBar").addEventListener("input", handleFilterChange);
+// document.getElementById("appointmentFilter").addEventListener("change", handleFilterChange);
 
 // async function handleFilterChange() {
 //   const searchBarValue = document.getElementById("searchBar").value.trim();

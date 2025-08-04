@@ -2,7 +2,15 @@
 
 import { API_BASE_URL } from "../config/config.js";
 
-const PATIENT_API = `${API_BASE_URL}/patient`;
+// const PATIENT_API = `${API_BASE_URL}/patient`;
+// const PATIENT_API = `${API_BASE_URL}/api/patient/me`;
+// const PATIENT_API = `${API_BASE_URL}/api/patient/me`;
+// const PATIENT_API = `${API_BASE_URL}/api/patient/me`;
+const PATIENT_API = `${API_BASE_URL}/patient`; // => http://localhost:8080/patient
+
+
+
+
 
 /**
  * Patient signup
@@ -137,6 +145,55 @@ export async function getPatientData(token) {
   }
 }
 
+// export async function getPatientData(token) {
+//   try {
+//     const response = await fetch(PATIENT_API, {
+//       headers: {
+//         "Authorization": `Bearer ${token}`,
+//         "Content-Type": "application/json"
+//       }
+//     });
+
+//     if (!response.ok) throw new Error("Failed to fetch patient data");
+
+//     const result = await response.json();
+
+//     const patient = result?.data || result?.patient || null;
+
+//     if (!patient) throw new Error("No patient data found in response");
+
+//     return patient;
+
+//   } catch (error) {
+//     console.error("Error fetching patient data:", error);
+//     return null;
+//   }
+// }
+
+// export async function getPatientData(token) {
+//   try {
+//     const response = await fetch(`${API_BASE_URL}/api/patient`, {
+//       headers: {
+//         "Authorization": `Bearer ${token}`,
+//         "Content-Type": "application/json"
+//       }
+//     });
+
+//     if (!response.ok) throw new Error("Failed to fetch patient data");
+
+//     const result = await response.json();
+
+//     const patient = result?.data || result?.patient || null;
+
+//     if (!patient) throw new Error("No patient data found in response");
+
+//     return patient;
+
+//   } catch (error) {
+//     console.error("Error fetching patient data:", error);
+//     return null;
+//   }
+// }
 
 
   // const response = await fetch(PATIENT_API, {
