@@ -132,6 +132,7 @@ import { openModal } from './modals.js';
 // app/src/main/resources/static/js/components/header.js
 // app/src/main/resources/static/js/components/modals.js
 
+
 document.addEventListener("DOMContentLoaded", () => {
   renderHeader();
 });
@@ -233,7 +234,9 @@ function attachHeaderButtonListeners() {
 
   if (patientLogin) {
     patientLogin.addEventListener("click", () => {
+      // loginBtn
       openModal("patientLogin");  
+      // openModal("loginBtn");  
     });
   }
 

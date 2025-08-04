@@ -52,44 +52,89 @@ public class PrescriptionService {
     }
 
     // Save a new prescription
-    public ResponseEntity<Map<String, String>> savePrescription(Prescription prescription) {
-        Map<String, String> response = new HashMap<>();
-        try {
-            // Check for existing prescription for the appointment
-            if (prescriptionRepository.findByAppointmentId(prescription.getAppointmentId()) != null) {
-                response.put("message", "Prescription already exists for this appointment");
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-            }
+    // public ResponseEntity<Map<String, String>> savePrescription(Prescription prescription) {
+    //     Map<String, String> response = new HashMap<>();
+    //     try {
+    //         // Check for existing prescription for the appointment
+    //         if (prescriptionRepository.findByAppointmentId(prescription.getAppointmentId()) != null) {
+    //             response.put("message", "Prescription already exists for this appointment");
+    //             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+    //         }
 
-            // Save if no existing prescription
-            prescriptionRepository.save(prescription);
-            response.put("message", "Prescription saved");
-            return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    //         // Save if no existing prescription
+    //         prescriptionRepository.save(prescription);
+    //         response.put("message", "Prescription saved");
+    //         return ResponseEntity.status(HttpStatus.CREATED).body(response);
 
-        } catch (Exception e) {
-            response.put("error", "An error occurred while saving the prescription");
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+    //     } catch (Exception e) {
+    //         response.put("error", "An error occurred while saving the prescription");
+    //         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+    //     }
+    // }
+
+
+
+    public ResponseEntity<Map<String, Object>> savePrescription(Prescription prescription) {
+    Map<String, Object> response = new HashMap<>();
+    try {
+        if (prescriptionRepository.findByAppointmentId(prescription.getAppointmentId()) != null) {
+            response.put("status", "error");
+            response.put("message", "Prescription already exists for this appointment");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
+
+        prescriptionRepository.save(prescription);
+        response.put("status", "success");
+        response.put("message", "Prescription saved successfully");
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+
+    } catch (Exception e) {
+        response.put("status", "error");
+        response.put("message", "An error occurred while saving the prescription");
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }
+}
 
     // Retrieve prescription by appointment ID
+    // public ResponseEntity<Map<String, Object>> getPrescription(Long appointmentId) {
+    //     Map<String, Object> result = new HashMap<>();
+    //     try {
+    //         List<Prescription> prescriptions = prescriptionRepository.findByAppointmentId(appointmentId);
+    //         if (prescriptions == null || prescriptions.isEmpty()) {
+    //             result.put("message", "No prescription found for this appointment");
+    //             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(result);
+    //         }
+
+    //         // result.put("prescription", prescriptions.get(0));
+    //         result.put("prescription", prescriptions);
+    //         return ResponseEntity.ok(result);
+
+    //     } catch (Exception e) {
+    //         result.put("error", "An error occurred while retrieving the prescription");
+    //         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(result);
+    //     }
+    // }
+
+
     public ResponseEntity<Map<String, Object>> getPrescription(Long appointmentId) {
-        Map<String, Object> result = new HashMap<>();
-        try {
-            List<Prescription> prescriptions = prescriptionRepository.findByAppointmentId(appointmentId);
-            if (prescriptions == null || prescriptions.isEmpty()) {
-                result.put("message", "No prescription found for this appointment");
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(result);
-            }
-
-            // result.put("prescription", prescriptions.get(0));
-            result.put("prescription", prescriptions);
-            return ResponseEntity.ok(result);
-
-        } catch (Exception e) {
-            result.put("error", "An error occurred while retrieving the prescription");
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(result);
+    Map<String, Object> result = new HashMap<>();
+    try {
+        List<Prescription> prescriptions = prescriptionRepository.findByAppointmentId(appointmentId);
+        if (prescriptions == null || prescriptions.isEmpty()) {
+            result.put("status", "error");
+            result.put("message", "No prescription found for this appointment");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(result);
         }
+
+        result.put("status", "success");
+        result.put("data", prescriptions); // could be a single item if needed
+        return ResponseEntity.ok(result);
+
+    } catch (Exception e) {
+        result.put("status", "error");
+        result.put("message", "An error occurred while retrieving the prescription");
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(result);
     }
+}
 
 }

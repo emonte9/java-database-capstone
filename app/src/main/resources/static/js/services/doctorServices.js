@@ -55,153 +55,281 @@
 
 // app/src/main/resources/static/js/services/doctorServices.js
 
-import { API_BASE_URL } from "../config/config.js";
-
-
-const DOCTOR_API = `${API_BASE_URL}/doctor`;
+// import { API_BASE_URL } from "../config/config.js";
 
 
 // const DOCTOR_API = `${API_BASE_URL}/doctor`;
-// const DOCTOR_API = `${API_BASE_URL}/doctor`;
-// const DOCTOR_API = "/api/doctor";
-
-// Get all doctors
 
 
+// // const DOCTOR_API = `${API_BASE_URL}/doctor`;
+// // const DOCTOR_API = `${API_BASE_URL}/doctor`;
+// // const DOCTOR_API = "/api/doctor";
 
-
-export async function getDoctors() {
-  try {
-    const res = await fetch(`${DOCTOR_API}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-
-    if (!res.ok) throw new Error("Failed to fetch doctors");
-    const data = await res.json();
-    // return data.doctors || [];
-    // return { doctors: data };
-    // return { doctors: data.doctors || [] }; // ✅ flat structure
-    // return data.doctors || [];
-    return { doctors: data.doctors || [] };
-  } catch (error) {
-    console.error("Error fetching doctors:", error);
-    // return [];
-    // return { doctors: [] };
-    return { doctors: [] };
-  }
-}
+// // Get all doctors
 
 
 
-export async function deleteDoctor(id, token) {
+
+// export async function getDoctors() {
+//   try {
+//     const res = await fetch(`${DOCTOR_API}`, {
+//       method: "GET",
+//       headers: {
+//         "Content-Type": "application/json",
+//       },
+//     });
+
+//     if (!res.ok) throw new Error("Failed to fetch doctors");
+//     const data = await res.json();
+//     // return data.doctors || [];
+//     // return { doctors: data };
+//     // return { doctors: data.doctors || [] }; // ✅ flat structure
+//     // return data.doctors || [];
+//     return { doctors: data.doctors || [] };
+//   } catch (error) {
+//     console.error("Error fetching doctors:", error);
+//     // return [];
+//     // return { doctors: [] };
+//     return { doctors: [] };
+//   }
+// }
+
+
+
+// export async function deleteDoctor(id, token) {
   
-  console.log("Deleting doctor with token:", token); // ❗ Check this output
-  if (!token || token === "null") {
-    return {
-      success: false,
-      message: "Missing or invalid auth token.",
-    };
-  }
+//   console.log("Deleting doctor with token:", token); // ❗ Check this output
+//   if (!token || token === "null") {
+//     return {
+//       success: false,
+//       message: "Missing or invalid auth token.",
+//     };
+//   }
 
-  try {
-    const res = await fetch(`${DOCTOR_API}/${id}/${token}`, {
-      method: "DELETE",
-      headers: { "Content-Type": "application/json" },
-    });
+//   try {
+//     const res = await fetch(`${DOCTOR_API}/${id}/${token}`, {
+//       method: "DELETE",
+//       headers: { "Content-Type": "application/json" },
+//     });
 
-    const data = await res.json();
-    return {
-      success: res.ok,
-      message: data.message || "Deletion failed",
-    };
-  } catch (error) {
-    console.error("Error deleting doctor:", error);
-    return {
-      success: false,
-      message: "An error occurred while deleting the doctor.",
-    };
-  }
-}
-
-
+//     const data = await res.json();
+//     return {
+//       success: res.ok,
+//       message: data.message || "Deletion failed",
+//     };
+//   } catch (error) {
+//     console.error("Error deleting doctor:", error);
+//     return {
+//       success: false,
+//       message: "An error occurred while deleting the doctor.",
+//     };
+//   }
+// }
 
 
 
-// Save a new doctor (requires auth token)
-export async function saveDoctor(doctor, token) {
-  try {
-    const res = await fetch(`${DOCTOR_API}/add?token=${token}`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(doctor),
-    });
 
-    const data = await res.json();
-    return {
-      success: res.ok,
-      message: data.message || "Doctor saved successfully",
-    };
-  } catch (error) {
-    console.error("Error saving doctor:", error);
-    return {
-      success: false,
-      message: "An error occurred while saving the doctor.",
-    };
-  }
-}
 
-// // Filter doctors by name, time, and specialty
+// // Save a new doctor (requires auth token)
+// export async function saveDoctor(doctor, token) {
+//   try {
+//     const res = await fetch(`${DOCTOR_API}/add?token=${token}`, {
+//       method: "POST",
+//       headers: {
+//         "Content-Type": "application/json",
+//       },
+//       body: JSON.stringify(doctor),
+//     });
+
+//     const data = await res.json();
+//     return {
+//       success: res.ok,
+//       message: data.message || "Doctor saved successfully",
+//     };
+//   } catch (error) {
+//     console.error("Error saving doctor:", error);
+//     return {
+//       success: false,
+//       message: "An error occurred while saving the doctor.",
+//     };
+//   }
+// }
+
+// // // Filter doctors by name, time, and specialty
+// // export async function filterDoctors(name, time, specialty) {
+// //   const filterURL = `${DOCTOR_API}/filter/${name || "null"}/${time || "null"}/${specialty || "null"}`;
+
+// //   try {
+// //     const res = await fetch(filterURL);
+// //     if (!res.ok) {
+// //       console.error("Filter request failed:", res.status);
+// //       return [];
+// //     }
+
+// //     const data = await res.json();
+// //     // console.log(data.doctor)
+// //     return data.doctors || [];
+// //     // setDoctors(filtered);
+// //   } catch (error) {
+// //     console.error("Error filtering doctors:", error);
+// //     alert("Failed to fetch filtered doctors.");
+// //     // return [];
+// //     return [];
+// //   }
+
+
+
+ 
+// //  }
 // export async function filterDoctors(name, time, specialty) {
-//   const filterURL = `${DOCTOR_API}/filter/${name || "null"}/${time || "null"}/${specialty || "null"}`;
+//   const filterURL = `${DOCTOR_API}/filter/${name || "all"}/${time || "all"}/${specialty || "all"}`;
+//   console.log("Requesting:", filterURL); // 🔍 URL debug
 
 //   try {
 //     const res = await fetch(filterURL);
 //     if (!res.ok) {
 //       console.error("Filter request failed:", res.status);
-//       return [];
+//       return { doctors: [] };
 //     }
 
 //     const data = await res.json();
-//     // console.log(data.doctor)
-//     return data.doctors || [];
-//     // setDoctors(filtered);
+//     console.log("Response from backend:", data); // 🔍 inspect structure
+
+//     return { doctors: data.doctors || [] }; // ✅ same structure
+//     // IF backend returns { doctors: [...] }
+//     // return data.doctors || [];
 //   } catch (error) {
 //     console.error("Error filtering doctors:", error);
 //     alert("Failed to fetch filtered doctors.");
+//     return { doctors: [] };
 //     // return [];
-//     return [];
+//   }
+// }
+
+
+
+
+// app/src/main/resources/static/js/services/doctorServices.js
+
+import { API_BASE_URL } from "../config/config.js";
+
+const DOCTOR_API = `${API_BASE_URL}/doctor`;
+
+// export async function getDoctors() {
+//   const res = await fetch(DOCTOR_API, {
+//     method: "GET",
+//     headers: { "Content-Type": "application/json" }
+//   });
+
+//   if (!res.ok) {
+//     throw new Error(`HTTP error ${res.status}`);
 //   }
 
+//   const data = await res.json();
+//   console.log("Raw doctor API response:", data); // Should be an array
+//   return data; // ✅ Return the array directly
+// }
 
 
- 
-//  }
-export async function filterDoctors(name, time, specialty) {
-  const filterURL = `${DOCTOR_API}/filter/${name || "all"}/${time || "all"}/${specialty || "all"}`;
-  console.log("Requesting:", filterURL); // 🔍 URL debug
+export async function getDoctors() {
+  const res = await fetch(DOCTOR_API, {
+    method: "GET",
+    headers: { "Content-Type": "application/json" }
+  });
+
+  if (!res.ok) {
+    throw new Error(`HTTP error ${res.status}`);
+  }
+
+  const data = await res.json();
+  console.log("Raw doctor API response:", data);
+
+  if (Array.isArray(data.doctors)) {
+    return data.doctors || [];
+    // return data.doctors;
+  } else {
+    console.error("Expected 'doctors' to be an array but got:", data.doctors);
+    return [];
+  }
+}
+
+
+// Delete a doctor (secure using Authorization header)
+export async function deleteDoctor(id, token) {
+  if (!token || token === "null") {
+    return { success: false, message: "Missing or invalid token." };
+  }
 
   try {
-    const res = await fetch(filterURL);
-    if (!res.ok) {
-      console.error("Filter request failed:", res.status);
-      return { doctors: [] };
-    }
+    const res = await fetch(`${DOCTOR_API}/delete/${id}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      }
+    });
 
     const data = await res.json();
-    console.log("Response from backend:", data); // 🔍 inspect structure
+    return {
+      success: res.ok,
+      message: data.message || "Doctor deleted"
+    };
+  } catch (error) {
+    console.error("Error deleting doctor:", error);
+    return {
+      success: false,
+      message: "An error occurred while deleting the doctor."
+    };
+  }
+}
 
-    return { doctors: data.doctors || [] }; // ✅ same structure
-    // IF backend returns { doctors: [...] }
-    // return data.doctors || [];
+// Save a new doctor
+export async function saveDoctor(doctor, token) {
+  if (!token || token === "null") {
+    return {
+      success: false,
+      message: "Missing or invalid token."
+    };
+  }
+
+  try {
+    const res = await fetch(`${DOCTOR_API}/add`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      },
+      body: JSON.stringify(doctor)
+    });
+
+    const data = await res.json();
+    return {
+      success: res.ok,
+      message: data.message || "Doctor saved successfully"
+    };
+  } catch (error) {
+    console.error("Error saving doctor:", error);
+    return {
+      success: false,
+      message: "An error occurred while saving the doctor."
+    };
+  }
+}
+
+// Filter doctors by query parameters (name, time, specialty)
+export async function filterDoctors(name = '', time = '', specialty = '') {
+  const url = `${DOCTOR_API}/filter/${name || 'all'}/${time || 'all'}/${specialty || 'all'}`;
+  try {
+    const res = await fetch(url);
+    if (!res.ok) {
+      console.error("Filter request failed:", res.status);
+      return [];
+    }
+    const data = await res.json();
+    console.log("Filtered doctors:", data);
+    return data.doctors || [];
   } catch (error) {
     console.error("Error filtering doctors:", error);
-    alert("Failed to fetch filtered doctors.");
-    return { doctors: [] };
-    // return [];
+    return [];
   }
 }

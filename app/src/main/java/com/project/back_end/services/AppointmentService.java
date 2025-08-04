@@ -14,6 +14,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.project.back_end.models.Appointment;
+import com.project.back_end.models.Doctor;
+import com.project.back_end.models.Patient;
 import com.project.back_end.repo.AppointmentRepository;
 import com.project.back_end.repo.DoctorRepository;
 import com.project.back_end.repo.PatientRepository;
@@ -96,27 +98,217 @@ public class AppointmentService {
 
 
     // 2. Update an existing appointment
-    @Transactional
-    public ResponseEntity<Map<String, String>> updateAppointment(Appointment appointment) {
-        Map<String, String> response = new HashMap<>();
+    // @Transactional
+    // public ResponseEntity<Map<String, String>> updateAppointment(Appointment appointment) {
+    //     Map<String, String> response = new HashMap<>();
 
-        Optional<Appointment> existingOpt = appointmentRepository.findById(appointment.getId());
-        if (existingOpt.isEmpty()) {
-            response.put("message", "Appointment not found");
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
-        }
+    //     Optional<Appointment> existingOpt = appointmentRepository.findById(appointment.getId());
+    //     if (existingOpt.isEmpty()) {
+    //         response.put("message", "Appointment not found");
+    //         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+    //     }
 
-        Appointment existing = existingOpt.get();
+    //     Appointment existing = existingOpt.get();
 
-        // Optional: Add time conflict check here
-        existing.setAppointmentTime(appointment.getAppointmentTime());
-        existing.setDoctor(appointment.getDoctor());
-        existing.setStatus(appointment.getStatus());
-        appointmentRepository.save(existing);
+    //     // Optional: Add time conflict check here
+    //     existing.setAppointmentTime(appointment.getAppointmentTime());
+    //     existing.setDoctor(appointment.getDoctor());
+    //     existing.setStatus(appointment.getStatus());
+    //     appointmentRepository.save(existing);
 
-        response.put("message", "Appointment updated successfully");
-        return ResponseEntity.ok(response);
+    //     response.put("message", "Appointment updated successfully");
+    //     return ResponseEntity.ok(response);
+    // }
+//     @Transactional
+// public ResponseEntity<Map<String, String>> updateAppointment(Appointment appointment) {
+//     Map<String, String> response = new HashMap<>();
+
+//     System.out.println("🟡 Incoming Appointment ID: " + appointment.getId());
+//     System.out.println("🟡 Doctor: " + (appointment.getDoctor() != null ? appointment.getDoctor().getId() : "null"));
+//     System.out.println("🟡 Patient: " + (appointment.getPatient() != null ? appointment.getPatient().getId() : "null"));
+//     System.out.println("🟡 Time: " + appointment.getAppointmentTime());
+//     System.out.println("🟡 Status: " + appointment.getStatus());
+
+//     Optional<Appointment> existingOpt = appointmentRepository.findById(appointment.getId());
+//     if (existingOpt.isEmpty()) {
+//         response.put("message", "Appointment not found");
+//         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+//     }
+
+//     Appointment existing = existingOpt.get();
+
+//     try {
+//         existing.setAppointmentTime(appointment.getAppointmentTime());
+//         existing.setDoctor(appointment.getDoctor());
+//         existing.setStatus(appointment.getStatus());
+//         appointmentRepository.save(existing);
+//     } catch (Exception e) {
+//         e.printStackTrace(); // 🔥 THIS will show the real cause in the logs
+//         response.put("message", "Error saving updated appointment");
+//         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+//     }
+
+//     response.put("message", "Appointment updated successfully");
+//     return ResponseEntity.ok(response);
+// }
+
+
+// @Transactional
+// public ResponseEntity<Map<String, String>> updateAppointment(Appointment appointment) {
+//     Map<String, String> response = new HashMap<>();
+
+//     try {
+//         System.out.println("🟡 Incoming Appointment ID: " + appointment.getId());
+//         System.out.println("🟡 Doctor ID: " + (appointment.getDoctor() != null ? appointment.getDoctor().getId() : "null"));
+//         System.out.println("🟡 Patient ID: " + (appointment.getPatient() != null ? appointment.getPatient().getId() : "null"));
+//         System.out.println("🟡 Time: " + appointment.getAppointmentTime());
+//         System.out.println("🟡 Status: " + appointment.getStatus());
+
+//         Optional<Appointment> existingOpt = appointmentRepository.findById(appointment.getId());
+//         if (existingOpt.isEmpty()) {
+//             response.put("message", "Appointment not found");
+//             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+//         }
+
+//         Appointment existing = existingOpt.get();
+
+//         // ✅ Fetch the full Doctor and Patient from DB
+//         Optional<Doctor> doctorOpt = doctorRepository.findById(appointment.getDoctor().getId());
+//         Optional<Patient> patientOpt = patientRepository.findById(appointment.getPatient().getId());
+
+//         if (doctorOpt.isEmpty() || patientOpt.isEmpty()) {
+//             response.put("message", "Doctor or Patient not found");
+//             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+//         }
+
+//         existing.setDoctor(doctorOpt.get());
+//         existing.setPatient(patientOpt.get());
+//         existing.setAppointmentTime(appointment.getAppointmentTime());
+//         existing.setStatus(appointment.getStatus());
+
+//         appointmentRepository.save(existing);
+
+//         response.put("message", "Appointment updated successfully");
+//         return ResponseEntity.ok(response);
+
+//     } catch (Exception e) {
+//         e.printStackTrace(); // <— Look in your server log!
+//         response.put("error", "Internal error during update");
+//         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+//     }
+// }
+
+
+
+// @Transactional
+// public ResponseEntity<Map<String, String>> updateAppointment(Appointment appointment) {
+//     Map<String, String> response = new HashMap<>();
+
+//     System.out.println("🔎 Received update payload:");
+//     System.out.println(" — Appointment ID: " + appointment.getId());
+//     System.out.println(" — Doctor ID: " + (appointment.getDoctor() != null ? appointment.getDoctor().getId() : "null"));
+//     System.out.println(" — Patient ID: " + (appointment.getPatient() != null ? appointment.getPatient().getId() : "null"));
+//     System.out.println(" — Appointment Time: " + appointment.getAppointmentTime());
+//     System.out.println(" — Status: " + appointment.getStatus());
+
+
+//     if (appointment.getAppointmentTime().isBefore(LocalDateTime.now())) {
+//         response.put("message", "Appointment time must be in the future");
+//         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+//     }
+
+//     Optional<Appointment> existingOpt = appointmentRepository.findById(appointment.getId());
+//     if (existingOpt.isEmpty()) {
+//         response.put("message", "Appointment not found");
+//         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+//     }
+
+//     Appointment existing = existingOpt.get();
+
+//     Optional<Doctor> doctorOpt = doctorRepository.findById(appointment.getDoctor().getId());
+//     Optional<Patient> patientOpt = patientRepository.findById(appointment.getPatient().getId());
+
+//     if (doctorOpt.isEmpty() || patientOpt.isEmpty()) {
+//         System.out.println("❌ Doctor or Patient not found in DB");
+//         response.put("message", "Doctor or Patient not found");
+//         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+//     }
+
+
+
+
+//     existing.setDoctor(doctorOpt.get());
+//     existing.setPatient(patientOpt.get());
+//     existing.setAppointmentTime(appointment.getAppointmentTime());
+//     existing.setStatus(appointment.getStatus());
+
+//     try {
+//         appointmentRepository.save(existing);
+//     } catch (Exception e) {
+//         e.printStackTrace(); // <— Most important
+//         response.put("message", "Error saving appointment");
+//         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+//     }
+
+//     response.put("message", "Appointment updated successfully");
+//     return ResponseEntity.ok(response);
+// }
+
+@Transactional
+public ResponseEntity<Map<String, Object>> updateAppointment(Appointment appointment) {
+    Map<String, Object> response = new HashMap<>();
+
+    System.out.println("🔎 Received update payload:");
+    System.out.println(" — Appointment ID: " + appointment.getId());
+    System.out.println(" — Doctor ID: " + (appointment.getDoctor() != null ? appointment.getDoctor().getId() : "null"));
+    System.out.println(" — Patient ID: " + (appointment.getPatient() != null ? appointment.getPatient().getId() : "null"));
+    System.out.println(" — Appointment Time: " + appointment.getAppointmentTime());
+    System.out.println(" — Status: " + appointment.getStatus());
+
+    Optional<Appointment> existingOpt = appointmentRepository.findById(appointment.getId());
+    if (existingOpt.isEmpty()) {
+        response.put("success", false);
+        response.put("message", "Appointment not found");
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
     }
+
+    Appointment existing = existingOpt.get();
+
+    Optional<Doctor> doctorOpt = doctorRepository.findById(appointment.getDoctor().getId());
+    Optional<Patient> patientOpt = patientRepository.findById(appointment.getPatient().getId());
+
+    if (doctorOpt.isEmpty() || patientOpt.isEmpty()) {
+        System.out.println("❌ Doctor or Patient not found in DB");
+        response.put("success", false);
+        response.put("message", "Doctor or Patient not found");
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+    }
+
+    // Validate appointment time is in the future
+    if (appointment.getAppointmentTime().isBefore(LocalDateTime.now())) {
+        response.put("success", false);
+        response.put("message", "Appointment time must be in the future");
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+    }
+
+    existing.setDoctor(doctorOpt.get());
+    existing.setPatient(patientOpt.get());
+    existing.setAppointmentTime(appointment.getAppointmentTime());
+    existing.setStatus(appointment.getStatus());
+
+    try {
+        appointmentRepository.save(existing);
+    } catch (Exception e) {
+        e.printStackTrace();
+        response.put("success", false);
+        response.put("message", "Error saving appointment");
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+    }
+
+    response.put("success", true);
+    response.put("message", "Appointment updated successfully");
+    return ResponseEntity.ok(response);
+}
 
 
 

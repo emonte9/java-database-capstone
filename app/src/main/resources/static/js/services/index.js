@@ -76,8 +76,8 @@ import { setRole,selectRole } from '../render.js';
 // const ADMIN_API = `${API_BASE_URL}/admin/login`;
 // const ADMIN_API = `${API_BASE_URL}/admin/login`;
 // const DOCTOR_API = `${API_BASE_URL}/doctor/login`;
-const DOCTOR_API = `${API_BASE_URL}/api/doctor/login`;
-const ADMIN_API = `${API_BASE_URL}/api/admin/login`;
+const DOCTOR_API = `${API_BASE_URL}/doctor/login`;
+const ADMIN_API = `${API_BASE_URL}/admin/login`;
 
 
 
@@ -121,9 +121,20 @@ export async function adminLoginHandler() {
     }
 
     const data = await res.json();
-    localStorage.setItem('token', data.token);
-    setRole('admin');
-    window.location.href = `/adminDashboard/${data.token}`;
+    // localStorage.setItem('token', data.token);
+    // setRole('admin');
+    // window.location.href = `/adminDashboard/${data.token}`;
+
+
+    // const data = await res.json();
+
+      if (data.status === 'success') {
+        localStorage.setItem('token', data.token);
+        setRole('admin');
+        window.location.href = `/adminDashboard/${data.token}`;
+      } else {
+        alert(data.message || 'Invalid credentials!');
+      }
   } catch (err) {
     console.error(err);
     alert('Login failed. Please try again.');

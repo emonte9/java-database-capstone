@@ -30,6 +30,15 @@
 		<java.version>17</java.version>
 	</properties>
 	<dependencies>
+	
+
+	
+
+		<dependency>
+  <groupId>org.springframework.boot</groupId>
+  <artifactId>spring-boot-starter-security</artifactId>
+</dependency>
+    
 
 	    <dependency>
           <groupId>org.springframework.boot</groupId>
@@ -71,6 +80,8 @@
 			<optional>true</optional>
 		</dependency>
 
+
+
 <dependency>
     <groupId>io.jsonwebtoken</groupId>
     <artifactId>jjwt-api</artifactId>
@@ -86,6 +97,8 @@
     <scope>runtime</scope>
 </dependency>
 
+
+
 <!-- https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt-jackson -->
 <dependency>
     <groupId>io.jsonwebtoken</groupId>
@@ -93,6 +106,9 @@
     <version>0.12.6</version>
     <scope>runtime</scope>
 </dependency>
+
+
+
 	
 
 		</dependencies>

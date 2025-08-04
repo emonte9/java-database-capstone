@@ -3,6 +3,8 @@ package com.project.back_end.controllers;
 
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,6 +19,7 @@ import com.project.back_end.services.CentralService;
 @RestController
 @RequestMapping("${api.path}admin")
 public class AdminController {
+    private static final Logger logger = LoggerFactory.getLogger(AdminController.class);
 
 // 1. Set Up the Controller Class:
 //    - Annotate the class with `@RestController` to indicate that it's a REST controller, used to handle web requests and return JSON responses.
@@ -46,8 +49,14 @@ public class AdminController {
     }
 
     // 3. Admin Login Endpoint
+    // @PostMapping("/login")
+    // public ResponseEntity<Map<String, String>> adminLogin(@RequestBody Admin admin) {
+    //     return centralService.validateAdmin(admin);
+    // }
+
     @PostMapping("/login")
     public ResponseEntity<Map<String, String>> adminLogin(@RequestBody Admin admin) {
+        logger.info("Login attempt for admin: {}", admin.getUsername());
         return centralService.validateAdmin(admin);
     }
 

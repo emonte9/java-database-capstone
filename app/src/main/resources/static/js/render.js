@@ -2,7 +2,15 @@
 //   localStorage.setItem('role', role);
 // }
 
+// document.addEventListener("DOMContentLoaded", () => {
+//   renderContent();
+// });
+document.addEventListener("DOMContentLoaded", () => {
+  renderContent();  // checks role
+  // initializePage(); // loads appointments
+});
 
+// render.js
  export function setRole(role) {
   localStorage.setItem('userRole', role);
  }
@@ -26,13 +34,24 @@ export function selectRole(role) {
   }
 }
 
+// export function renderContent() {
+//   const role = localStorage.getItem('userRole');
+//   if (!role) {
+//     window.location.href = "/";
+//     return;
+//   }
+// }
+
 export function renderContent() {
   const role = localStorage.getItem('userRole');
-  if (!role) {
+
+  const isProtectedPage = window.location.pathname.includes('adminDashboard');
+
+  if (isProtectedPage && role !== 'admin') {
     window.location.href = "/";
-    return;
   }
 }
 
 // Optional: make selectRole globally accessible for inline HTML
 window.selectRole = selectRole;
+window.renderContent = renderContent;

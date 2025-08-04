@@ -3,7 +3,6 @@ package com.project.back_end.controllers;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.project.back_end.DTO.DoctorDTO;
 import com.project.back_end.DTO.Login;
 import com.project.back_end.models.Doctor;
 import com.project.back_end.services.CentralService;
@@ -359,46 +357,112 @@ public class DoctorController {
 
 
 
+// @GetMapping("/filter/{name}/{time}/{speciality}")
+// public Map<String, Object> filterDoctor(
+//         @PathVariable String name,
+//         @PathVariable String specialty,
+//         @PathVariable String time) {
+
+//     List<Doctor> allDoctors = doctorService.getDoctors();
+
+//     List<DoctorDTO> filteredDoctorDTOs = allDoctors.stream()
+//         .filter(doc -> name.isEmpty() || doc.getName().toLowerCase().contains(name.toLowerCase()))
+//         .filter(doc -> specialty.isEmpty() || doc.getSpecialty().equalsIgnoreCase(specialty))
+//         .filter(doc -> {
+//             if (time.isEmpty() || "all".equalsIgnoreCase(time)) return true;
+//             for (String t : doc.getAvailableTimes()) {
+//                 int hour = Integer.parseInt(t.split("-")[0].split(":")[0]);
+//                 if ("AM".equalsIgnoreCase(time) && hour >= 0 && hour < 12) return true;
+//                 if ("PM".equalsIgnoreCase(time) && hour >= 12 && hour < 24) return true;
+//             }
+//             return false;
+//         })
+//         .map(doc -> {
+//             List<String> filteredTimes = doc.getAvailableTimes();
+
+//             if (!time.isEmpty() && !"all".equalsIgnoreCase(time)) {
+//                 filteredTimes = doc.getAvailableTimes().stream()
+//                     .filter(t -> {
+//                         int hour = Integer.parseInt(t.split("-")[0].split(":")[0]);
+//                         return "AM".equalsIgnoreCase(time) ? hour < 12 : hour >= 12;
+//                     })
+//                     .collect(Collectors.toList());
+//             }
+
+//             // Create DTO with filtered times
+//             DoctorDTO dto = new DoctorDTO(doc);
+//             dto.setAvailableTimes(filteredTimes);
+//             return dto;
+//         })
+//         .collect(Collectors.toList());
+
+//     return Map.of("doctors", filteredDoctorDTOs);
+// }
+
+
+// @GetMapping("/filter/{name}/{time}/{speciality}")
+// public Map<String, Object> filterDoctor(
+//         @PathVariable String name,
+//         @PathVariable String time,
+//         @PathVariable String speciality) {
+
+//     // Convert 'null' or 'all' to empty strings
+//     String filteredName = name.equalsIgnoreCase("null") || name.equalsIgnoreCase("all") ? "" : name;
+//     String filteredTime = time.equalsIgnoreCase("null") || time.equalsIgnoreCase("all") ? "" : time;
+//     String filteredSpeciality = speciality.equalsIgnoreCase("null") || speciality.equalsIgnoreCase("all") ? "" : speciality;
+
+//     List<Doctor> allDoctors = doctorService.getDoctors();
+
+//     List<DoctorDTO> filteredDoctorDTOs = allDoctors.stream()
+//         .filter(doc -> filteredName.isEmpty() || doc.getName().toLowerCase().contains(filteredName.toLowerCase()))
+//         .filter(doc -> filteredSpeciality.isEmpty() || doc.getSpecialty().equalsIgnoreCase(filteredSpeciality))
+//         .filter(doc -> {
+//             if (filteredTime.isEmpty()) return true;
+//             for (String t : doc.getAvailableTimes()) {
+//                 int hour = Integer.parseInt(t.split("-")[0].split(":")[0]);
+//                 if ("AM".equalsIgnoreCase(filteredTime) && hour < 12) return true;
+//                 if ("PM".equalsIgnoreCase(filteredTime) && hour >= 12) return true;
+//             }
+//             return false;
+//         })
+//         .map(doc -> {
+//             List<String> filteredTimes = doc.getAvailableTimes();
+
+//             if (!filteredTime.isEmpty()) {
+//                 filteredTimes = doc.getAvailableTimes().stream()
+//                     .filter(t -> {
+//                         int hour = Integer.parseInt(t.split("-")[0].split(":")[0]);
+//                         return "AM".equalsIgnoreCase(filteredTime) ? hour < 12 : hour >= 12;
+//                     })
+//                     .collect(Collectors.toList());
+//             }
+
+//             DoctorDTO dto = new DoctorDTO(doc);
+//             dto.setAvailableTimes(filteredTimes);
+//             return dto;
+//         })
+//         .collect(Collectors.toList());
+
+//     return Map.of("doctors", filteredDoctorDTOs);
+// }
+// @GetMapping("/filter/{name}/{time}/{speciality}")
+// public Map<String, Object> filterDoctor(
+//         @PathVariable String name,
+//         @PathVariable String time,
+//         @PathVariable String speciality) {
+
+//     // Call the service method directly
+//     return doctorService.filterDoctorsByNameSpecialtyAndTime(name, speciality, time);
+// }
+
+
 @GetMapping("/filter/{name}/{time}/{speciality}")
 public Map<String, Object> filterDoctor(
         @PathVariable String name,
-        @PathVariable String specialty,
-        @PathVariable String time) {
-
-    List<Doctor> allDoctors = doctorService.getDoctors();
-
-    List<DoctorDTO> filteredDoctorDTOs = allDoctors.stream()
-        .filter(doc -> name.isEmpty() || doc.getName().toLowerCase().contains(name.toLowerCase()))
-        .filter(doc -> specialty.isEmpty() || doc.getSpecialty().equalsIgnoreCase(specialty))
-        .filter(doc -> {
-            if (time.isEmpty() || "all".equalsIgnoreCase(time)) return true;
-            for (String t : doc.getAvailableTimes()) {
-                int hour = Integer.parseInt(t.split("-")[0].split(":")[0]);
-                if ("AM".equalsIgnoreCase(time) && hour >= 0 && hour < 12) return true;
-                if ("PM".equalsIgnoreCase(time) && hour >= 12 && hour < 24) return true;
-            }
-            return false;
-        })
-        .map(doc -> {
-            List<String> filteredTimes = doc.getAvailableTimes();
-
-            if (!time.isEmpty() && !"all".equalsIgnoreCase(time)) {
-                filteredTimes = doc.getAvailableTimes().stream()
-                    .filter(t -> {
-                        int hour = Integer.parseInt(t.split("-")[0].split(":")[0]);
-                        return "AM".equalsIgnoreCase(time) ? hour < 12 : hour >= 12;
-                    })
-                    .collect(Collectors.toList());
-            }
-
-            // Create DTO with filtered times
-            DoctorDTO dto = new DoctorDTO(doc);
-            dto.setAvailableTimes(filteredTimes);
-            return dto;
-        })
-        .collect(Collectors.toList());
-
-    return Map.of("doctors", filteredDoctorDTOs);
+        @PathVariable String time,
+        @PathVariable String speciality) {
+    // Controller delegates to the central service method
+    return centralService.filterDoctor(name, speciality, time);
 }
 
 // public Map<String, Object> filterDoctor(String name, String specialty, String time) {

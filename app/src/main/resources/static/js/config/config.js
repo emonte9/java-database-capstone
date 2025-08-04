@@ -15,3 +15,22 @@ export const API_BASE_URL = "http://localhost:8080";
 
 // export const API_BASE_URL = "http://localhost:8080/api";
 // "http://localhost:8080/api";
+
+
+
+// curl -X POST http://localhost:8080/patient/login \
+//   -H "Content-Type: application/json" \
+//   -d '{"email":"jane.doe@example.com","password":"passJane1"}'
+
+
+// curl -X POST http://localhost:8080/patient/login \
+//   -H "Content-Type: application/json" \
+//   -d '{"email":"emily.rose@example.com","password":"emilyPass99"}'
+
+
+// curl -X POST http://localhost:8080/patient/login \
+//   -H "Content-Type: application/json" \
+//   -d '{"email":"emily.rose@example.com","password":"emilyPass99"}'
+
+
+//   emily.rose@example.com

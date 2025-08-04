@@ -1,10 +1,8 @@
 package com.project.back_end.controllers;
 
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -123,18 +121,39 @@ public class AppointmentController {
     }
 
     // 5. Update Appointment (patient-only)
-@PutMapping("/{token}")
-public ResponseEntity<?> updateAppointment(
-        @RequestBody Appointment appointment,
-        @PathVariable String token) {
+// @PutMapping("/{token}")
+// public ResponseEntity<?> updateAppointment(
+//         @RequestBody Appointment appointment,
+//         @PathVariable String token) {
 
-        if (!tokenService.validateToken(token, "patient")) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+//         if (!tokenService.validateToken(token, "patient")) {
+//             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+//                     .body(Map.of("error", "Unauthorized access: Invalid patient token"));
+//         }
+
+//         return appointmentService.updateAppointment(appointment);
+//     }
+        @PutMapping("/{token}")
+        public ResponseEntity<?> updateAppointment(
+                @RequestBody Appointment appointment,
+                @PathVariable String token) {
+
+            if (!tokenService.validateToken(token, "patient")) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(Map.of("error", "Unauthorized access: Invalid patient token"));
-        }
+            }
 
-        return appointmentService.updateAppointment(appointment);
-    }
+            try {
+                System.out.println("Incoming update request: " + appointment);
+                System.out.println("Appointment ID: " + appointment.getId());
+                
+                return appointmentService.updateAppointment(appointment);
+            } catch (Exception e) {
+                e.printStackTrace(); // or use a logger
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "Internal error during update"));
+            }
+        }
 
     // 6. Cancel Appointment (patient-only)
     @DeleteMapping("/{id}/{token}")

@@ -8,11 +8,28 @@ let allAppointments = [];
 let filteredAppointments = [];
 let patientId = null;
 
+
+// document.addEventListener("DOMContentLoaded", initializePage);
+
 document.addEventListener("DOMContentLoaded", initializePage);
+
+document.addEventListener("DOMContentLoaded", () => {
+  const searchBar = document.getElementById("searchBar");
+  const appointmentFilter = document.getElementById("appointmentFilter");
+
+  if (searchBar) {
+    searchBar.addEventListener("input", handleFilterChange);
+  }
+
+  if (appointmentFilter) {
+    appointmentFilter.addEventListener("change", handleFilterChange);
+  }
+});
 
 async function initializePage() {
   try {
     if (!token) throw new Error("No token found");
+    console.log("Token being used:", token);
 
     const patient = await getPatientData(token);
     if (!patient) throw new Error("Failed to fetch patient details");
@@ -22,6 +39,9 @@ async function initializePage() {
     const appointmentData = await getPatientAppointments(patientId, token, "patient") || [];
     allAppointments = appointmentData.filter(app => app.patientId === patientId);
 
+    console.log("Fetched appointments:", appointmentData);
+    console.log("Filtered for this patient ID:", patientId);
+    console.log("Appointments for patient:", allAppointments);
     renderAppointments(allAppointments);
   } catch (error) {
     console.error("Error loading appointments:", error);
@@ -84,9 +104,38 @@ function redirectToUpdatePage(appointment) {
 document.getElementById("searchBar").addEventListener("input", handleFilterChange);
 document.getElementById("appointmentFilter").addEventListener("change", handleFilterChange);
 
+// async function handleFilterChange() {
+//   const searchBarValue = document.getElementById("searchBar").value.trim();
+//   const filterValue = document.getElementById("appointmentFilter").value;
+
+//   const name = searchBarValue || null;
+//   const condition = filterValue === "allAppointments" ? null : filterValue || null;
+
+//   try {
+//     const response = await filterAppointments(condition, name, token);
+//     const appointments = response?.appointments || [];
+//     filteredAppointments = appointments.filter(app => app.patientId === patientId);
+
+//     renderAppointments(filteredAppointments);
+//   } catch (error) {
+//     console.error("Failed to filter appointments:", error);
+//     alert("❌ An error occurred while filtering appointments.");
+//   }
+// }
+
+
+
 async function handleFilterChange() {
-  const searchBarValue = document.getElementById("searchBar").value.trim();
-  const filterValue = document.getElementById("appointmentFilter").value;
+  const searchBarInput = document.getElementById("searchBar");
+  const appointmentFilterInput = document.getElementById("appointmentFilter");
+
+  if (!searchBarInput || !appointmentFilterInput) {
+    console.warn("Search or filter inputs not found in DOM.");
+    return;
+  }
+
+  const searchBarValue = searchBarInput.value.trim();
+  const filterValue = appointmentFilterInput.value;
 
   const name = searchBarValue || null;
   const condition = filterValue === "allAppointments" ? null : filterValue || null;

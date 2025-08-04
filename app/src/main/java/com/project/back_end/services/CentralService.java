@@ -7,8 +7,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -102,115 +104,46 @@ private final TokenService tokenService;
         this.patientService = patientService;
     }
 
+
+
+ 
+
     // 1. validateToken
     public ResponseEntity<Map<String, String>> validateToken(String token, String user) {
-        Map<String, String> response = new HashMap<>();
-        if (!tokenService.validateToken(token, user)) {
-            response.put("error", "Invalid or expired token");
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
-        }
-        response.put("message", "Token is valid");
-        return ResponseEntity.ok(response);
+    Map<String, String> response = new HashMap<>();
+    if (!tokenService.validateToken(token, user)) {
+        response.put("status", "error");
+        response.put("message", "Invalid or expired token");
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
     }
-
-    // 2. validateAdmin
-    // public ResponseEntity<Map<String, String>> validateAdmin(Admin receivedAdmin) {
-    //     Map<String, String> response = new HashMap<>();
-    //     try {
-    //         Admin admin = adminRepository.findByUsername(receivedAdmin.getUsername());
-    //         if (admin != null && admin.getPassword().equals(receivedAdmin.getPassword())) {
-    //             String token = tokenService.generateToken(admin.getUsername(), "admin");
-    //             // String token = tokenService.generateToken(admin.getUsername(), "admin");
-    //             response.put("token", token);
-    //             return ResponseEntity.ok(response);
-    //         } else {
-    //             response.put("error", "Invalid username or password");
-    //             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
-    //         }
-    //     } catch (Exception e) {
-    //         response.put("error", "An error occurred during authentication");
-    //         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
-    //     }
-    // }
-
-//     public ResponseEntity<Map<String, String>> validateAdmin(Admin receivedAdmin) {
-//     Map<String, String> response = new HashMap<>();
-//     try {
-//         Admin admin = adminRepository.findByUsername(receivedAdmin.getUsername());
-//         if (admin != null && admin.getPassword().equals(receivedAdmin.getPassword())) {
-//             String token = tokenService.generateToken(admin.getUsername(), "admin");
-//             response.put("token", token);
-//             return ResponseEntity.ok(response);
-//         } else {
-//             response.put("error", "Invalid username or password");
-//             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
-//         }
-//     } catch (Exception e) {
-//         e.printStackTrace(); // 👈 Add this
-//         response.put("error", "An error occurred during authentication");
-//         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
-//     }
-// }
+    response.put("status", "success");
+    response.put("message", "Token is valid");
+    return ResponseEntity.ok(response);
+}
 
 public ResponseEntity<Map<String, String>> validateAdmin(@RequestBody Admin receivedAdmin) {
     Map<String, String> response = new HashMap<>();
     try {
-        System.out.println("🧪 Incoming login request: " + receivedAdmin.getUsername());
-
         Admin admin = adminRepository.findByUsername(receivedAdmin.getUsername());
-
-        if (admin == null) {
-            System.out.println("❌ Admin not found in DB.");
-            response.put("error", "Invalid username or password");
+        if (admin == null || !admin.getPassword().equals(receivedAdmin.getPassword())) {
+            response.put("status", "error");
+            response.put("message", "Invalid username or password");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
         }
 
-        System.out.println("✅ Admin found. Comparing passwords...");
-        if (admin.getPassword().equals(receivedAdmin.getPassword())) {
-            String token = tokenService.generateToken(admin.getUsername(), "admin");
-            response.put("token", token);
-            return ResponseEntity.ok(response);
-        } else {
-            System.out.println("❌ Password mismatch.");
-            response.put("error", "Invalid username or password");
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
-        }
+        String token = tokenService.generateToken(admin.getUsername(), "admin");
+        response.put("status", "success");
+        response.put("token", token);
+        return ResponseEntity.ok(response);
+
     } catch (Exception e) {
-        e.printStackTrace();  // Logs full stack trace to console
-        response.put("error", "An error occurred during authentication");
+        response.put("status", "error");
+        response.put("message", "An error occurred during authentication");
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }
 }
-    // // 3. filterDoctor
-    // public Map<String, Object> filterDoctor(String name, String specialty, String time) {
-    //     Map<String, Object> result = new HashMap<>();
-    //     try {
-    //         // List<Doctor> doctors = doctorService.filterDoctorsByNameSpecilityandTime(name, specialty, time);
-    //         // Map<String, Object> doctors = doctorService.filterDoctorsByNameSpecialtyAndTime(name, specialty, time);
-    //         // List<Doctor> doctors = doctorService.filterDoctorsByNameSpecialtyAndTime(name, specialty, time);
-    //         return doctorService.filterDoctorsByNameSpecialtyAndTime(name, specialty, name);
-    //         // result.put("doctors", doctors.get("doctors"));
-    //         // result.put("doctors", doctors); // ✅ Always returns with a "doctors" key
-    //         // result.putAll(doctors);
-            
-    //     } catch (Exception e) {
-    //         result.put("error", "Failed to filter doctors");
-    //     }
-    //     return result;
-    // }
 
 
-
-    
-    // public Map<String, Object> filterDoctor(String name, String specialty, String time) {
-    //     Map<String, Object> result = new HashMap<>();
-    //     try {
-    //         return doctorService.filterDoctorsByNameSpecialtyAndTime(name, specialty, time); // ✅ correct param usage
-    //     } catch (Exception e) {
-    //         result.put("error", "Failed to filter doctors");
-    //         return result;
-    //     }
-    // }
 
 
     public Map<String, Object> filterDoctor(String name, String specialty, String time) {
@@ -253,54 +186,139 @@ public ResponseEntity<Map<String, String>> validateAdmin(@RequestBody Admin rece
     }
 
     // 5. validatePatient (for registration)
+   
     public boolean validatePatient(Patient patient) {
         return patientRepository.findByEmailOrPhone(patient.getEmail(), patient.getPhone()) == null;
     }
 
-    // 6. validatePatientLogin
+//     public boolean validatePatient(Patient patient) {
+//     return patientRepository.findByEmail(patient.getEmail()) == null &&
+//            patientRepository.find(patient.getPhone()) == null;
+// }
+
+    
+
+// public ResponseEntity<Map<String, String>> validatePatientLogin(Login login) {
+//     System.out.println("Login email: " + login.getEmail());
+//     System.out.println("Login password: " + login.getPassword());
+
+//     Map<String, String> response = new HashMap<>();
+//     try {
+//         Patient patient = patientRepository.findByEmail(login.getEmail());
+
+//         if (patient != null && patient.getPassword().equals(login.getPassword())) {
+//             String token = tokenService.generateToken(patient.getEmail(), "patient");
+//             response.put("status", "success");
+//             response.put("token", token);
+//             return ResponseEntity.ok(response);
+//         } else {
+//             response.put("status", "error");
+//             response.put("message", "Invalid email or password");
+//             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+//         }
+//     } catch (Exception e) {
+//         response.put("status", "error");
+//         response.put("message", "Login failed due to server error");
+//         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+//     }
+// }
+
+@Autowired
+private PasswordEncoder passwordEncoder;
+
+  // 6. validatePatientLogin
     public ResponseEntity<Map<String, String>> validatePatientLogin(Login login) {
         Map<String, String> response = new HashMap<>();
         try {
-            Patient patient = patientRepository.findByEmail(login.getIdentifier());
-            if (patient != null && patient.getPassword().equals(login.getPassword())) {
+            Patient patient = patientRepository.findByEmail(login.getEmail());
+            if (patient != null && login.getPassword().equals(patient.getPassword())) {
+                // valid
+                // passwordEncoder.encode("plaintextPassword");
                 String token = tokenService.generateToken(patient.getEmail(), "patient");
                 // String token = tokenService.generateToken(admin.getUsername(), "admin");
                 response.put("token", token);
                 return ResponseEntity.ok(response);
-            } else {
+            }else {
                 response.put("error", "Invalid email or password");
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
             }
+            // if (patient != null && patient.getPassword().equals(login.getPassword())) {
+            //     String token = tokenService.generateToken(patient.getEmail(), "patient");
+            //     // String token = tokenService.generateToken(admin.getUsername(), "admin");
+            //     response.put("token", token);
+            //     return ResponseEntity.ok(response);
+            // } 
+            // else {
+            //     response.put("error", "Invalid email or password");
+            //     return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+            // }
         } catch (Exception e) {
             response.put("error", "Login failed due to server error");
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
+    // 6. validatePatientLogin
+//     public ResponseEntity<Map<String, String>> validatePatientLogin(Login login) {
+//         System.out.println("Login email: " + login.getEmail());
+//         System.out.println("Login password: " + login.getPassword());
+//     Map<String, String> response = new HashMap<>();
+//     try {
+//         // Patient patient = patientRepository.findByEmail(login.getIdentifier());
+//          Patient patient = patientRepository.findByEmail(login.getEmail());
+//         if (patient != null && patient.getPassword().equals(login.getPassword())) {
+//             String token = tokenService.generateToken(patient.getEmail(), "patient");
+//             response.put("status", "success");
+//             response.put("token", token);
+//             return ResponseEntity.ok(response);
+//         } else {
+//             response.put("status", "error");
+//             response.put("message", "Invalid email or password");
+//             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+//         }
+//     } catch (Exception e) {
+//         response.put("status", "error");
+//         response.put("message", "Login failed due to server error");
+//         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+//     }
+// }
+
+ 
 
     // 7. filterPatient
     public ResponseEntity<Map<String, Object>> filterPatient(String condition, String name, String token) {
-        String email = tokenService.extractIdentifier(token);
-        Patient patient = patientRepository.findByEmail(email);
-        Map<String, Object> result = new HashMap<>();
+    String email = tokenService.extractIdentifier(token);
+    Patient patient = patientRepository.findByEmail(email);
+    Map<String, Object> result = new HashMap<>();
 
-        if (patient == null) {
-            result.put("error", "Patient not found");
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(result);
-        }
-
-        Long patientId = patient.getId();
-
-        if (condition != null && name != null) {
-            return patientService.filterByDoctorAndCondition(condition, name, patientId);
-        } else if (condition != null) {
-            return patientService.filterByCondition(condition, patientId);
-        } else if (name != null) {
-            return patientService.filterByDoctor(name, patientId);
-        } else {
-            result.put("message", "Please provide filter criteria");
-            return ResponseEntity.badRequest().body(result);
-        }
+    if (patient == null) {
+        result.put("status", "error");
+        result.put("message", "Patient not found");
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(result);
     }
 
+    Long patientId = patient.getId();
+
+    ResponseEntity<Map<String, Object>> response;
+    if (condition != null && name != null) {
+        response = patientService.filterByDoctorAndCondition(condition, name, patientId);
+    } else if (condition != null) {
+        response = patientService.filterByCondition(condition, patientId);
+    } else if (name != null) {
+        response = patientService.filterByDoctor(name, patientId);
+    } else {
+        result.put("status", "error");
+        result.put("message", "Please provide filter criteria");
+        return ResponseEntity.badRequest().body(result);
+    }
+
+    // Ensure response contains "status" if it's not already structured
+    Map<String, Object> body = response.getBody();
+    if (body != null && !body.containsKey("status")) {
+        body.put("status", "success");
+    }
+
+    return response;
+}
+  
 
 }

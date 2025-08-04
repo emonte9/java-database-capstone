@@ -18,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.project.back_end.DTO.DoctorDTO;
 import com.project.back_end.DTO.Login;
 import com.project.back_end.models.Appointment;
 import com.project.back_end.models.Doctor;
@@ -265,7 +266,8 @@ public List<Doctor> getDoctors() {
 
 
     public ResponseEntity<Map<String, String>> validateDoctor(Login login) {
-    Doctor doctor = doctorRepository.findByEmail(login.getIdentifier());
+    // Doctor doctor = doctorRepository.findByEmail(login.getIdentifier());
+    Doctor doctor = doctorRepository.findByEmail(login.getEmail());
 
         if (doctor == null) {
             return ResponseEntity.status(404).body(Map.of("error", "Doctor not found"));
@@ -357,6 +359,43 @@ public List<Doctor> getDoctors() {
 
 
 
+// @Transactional(readOnly = true)
+// public Map<String, Object> filterDoctorsByNameSpecialtyAndTime(String name, String specialty, String amOrPm) {
+//     Map<String, Object> result = new HashMap<>();
+
+//     try {
+//         List<Doctor> doctors;
+
+//         boolean filterByName = name != null && !name.equalsIgnoreCase("all") && !name.isBlank();
+//         boolean filterBySpecialty = specialty != null && !specialty.equalsIgnoreCase("all") && !specialty.isBlank();
+
+//         if (!filterByName && !filterBySpecialty) {
+//             // No filters applied on name/specialty → get all doctors
+//             doctors = doctorRepository.findAll();
+//         } else if (filterByName && filterBySpecialty) {
+//             doctors = doctorRepository.findByNameContainingIgnoreCaseAndSpecialtyIgnoreCase(name, specialty);
+//         } else if (filterByName) {
+//             // doctors = doctorRepository.findByNameContainingIgnoreCase(name);
+//             doctors = doctorRepository.findByNameLike(name);
+//         } else {
+//             doctors = doctorRepository.findBySpecialtyIgnoreCase(specialty);
+//         }
+
+//         // Filter by AM/PM if specified and not "all"
+//         if (amOrPm != null && !amOrPm.equalsIgnoreCase("all")) {
+//             doctors = filterDoctorByTime(doctors, amOrPm);
+//         }
+
+//         result.put("doctors", doctors);
+//         return result;
+
+//     } catch (Exception e) {
+//         result.put("error", "Failed to filter doctors");
+//         return result;
+//     }
+// }
+
+
 @Transactional(readOnly = true)
 public Map<String, Object> filterDoctorsByNameSpecialtyAndTime(String name, String specialty, String amOrPm) {
     Map<String, Object> result = new HashMap<>();
@@ -368,7 +407,6 @@ public Map<String, Object> filterDoctorsByNameSpecialtyAndTime(String name, Stri
         boolean filterBySpecialty = specialty != null && !specialty.equalsIgnoreCase("all") && !specialty.isBlank();
 
         if (!filterByName && !filterBySpecialty) {
-            // No filters applied on name/specialty → get all doctors
             doctors = doctorRepository.findAll();
         } else if (filterByName && filterBySpecialty) {
             doctors = doctorRepository.findByNameContainingIgnoreCaseAndSpecialtyIgnoreCase(name, specialty);
@@ -379,12 +417,27 @@ public Map<String, Object> filterDoctorsByNameSpecialtyAndTime(String name, Stri
             doctors = doctorRepository.findBySpecialtyIgnoreCase(specialty);
         }
 
-        // Filter by AM/PM if specified and not "all"
-        if (amOrPm != null && !amOrPm.equalsIgnoreCase("all")) {
-            doctors = filterDoctorByTime(doctors, amOrPm);
-        }
+        List<DoctorDTO> filteredDTOs = doctors.stream()
+            .map(doc -> {
+                List<String> times = doc.getAvailableTimes();
 
-        result.put("doctors", doctors);
+                if (amOrPm != null && !amOrPm.equalsIgnoreCase("all")) {
+                    times = times.stream()
+                        .filter(t -> {
+                            int hour = Integer.parseInt(t.split("-")[0].split(":")[0]);
+                            return "AM".equalsIgnoreCase(amOrPm) ? hour < 12 : hour >= 12;
+                        })
+                        .collect(Collectors.toList());
+                }
+
+                DoctorDTO dto = new DoctorDTO(doc);
+                dto.setAvailableTimes(times);
+                return dto;
+            })
+            .filter(dto -> !dto.getAvailableTimes().isEmpty())
+            .collect(Collectors.toList());
+
+        result.put("doctors", filteredDTOs);
         return result;
 
     } catch (Exception e) {

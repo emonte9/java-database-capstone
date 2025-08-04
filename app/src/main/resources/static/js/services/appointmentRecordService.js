@@ -48,6 +48,8 @@ export async function updateAppointment(appointment, token) {
     });
 
     const data = await response.json();
+    console.log("update " + data)
+    console.log("✅ Update response JSON:", JSON.stringify(data, null, 2));
     return {
       success: response.ok,
       message: data.message || "Something went wrong"

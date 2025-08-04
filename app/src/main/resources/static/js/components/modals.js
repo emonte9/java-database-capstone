@@ -5,6 +5,16 @@ import {
 } from '../services/index.js';  // adjust the path if needed
 
 
+import { patientSignup, patientLogin } from '../services/patientServices.js';
+
+import { patientSignup as signupPatient, patientLogin as loginPatient } from '../services/patientServices.js';
+// app/src/main/resources/static/js/adminDashboard.js
+
+import { adminAddDoctor } from '../adminDashboard.js'
+
+// import { adminAddDoctor } from '../services/adminServices.js'; // adjust the path as needed
+// import { adminLoginHandler, doctorLoginHandler } from '../services/index.js'; // if they're grouped
+
 // import { 
 //   adminLoginHandler, 
 //   doctorLoginHandler, 
@@ -16,8 +26,25 @@ import {
 
 // modals.js
 export function openModal(type) {
-  console.log("hello world")
   let modalContent = '';
+  const modal = document.getElementById('modal');
+  const modalBody = document.getElementById('modal-body');
+  const closeBtn = document.getElementById('closeModal');
+
+  if (!modal || !modalBody || !closeBtn) {
+    console.warn("❌ Modal elements not found in DOM");
+    return;
+  }
+
+  modalBody.innerHTML = modalContent;
+  modal.style.display = 'block';
+
+  closeBtn.onclick = () => {
+    modal.style.display = 'none';
+  }; // added this
+
+  console.log("hello world")
+  // let modalContent = '';
   if (type === 'addDoctor') {
     modalContent = `
          <h2>Add Doctor</h2>
@@ -100,10 +127,70 @@ export function openModal(type) {
     document.getElementById("signupBtn").addEventListener("click", signupPatient);
   }
 
-  if (type === "patientLogin") {
-    document.getElementById("loginBtn").addEventListener("click", loginPatient);
-  }
+  // if (type === "patientLogin") {
+  //   document.getElementById("loginBtn").addEventListener("click", loginPatient);
+  // }
 
+
+//   if (type === "patientLogin") {
+//   document.getElementById("loginBtn").addEventListener("click", () => {
+//     const email = document.getElementById("email").value;
+//     const password = document.getElementById("password").value;
+
+//     loginPatient({ email, password });
+//   });
+//   document.getElementById("loginBtn").addEventListener("click", async () => {
+//   const email = document.getElementById("email").value;
+//   const password = document.getElementById("password").value;
+
+//   const result = await loginPatient({ email, password });
+
+//   // if (result.success) {
+//   //   alert("✅ Login successful!");
+//   //   document.getElementById('modal').style.display = 'none';
+//   // } 
+  
+  
+//   if (result.success) {
+//   localStorage.setItem("userRole", "loggedPatient");
+//   localStorage.setItem("token", result.token); // make sure result.token is returned from backend
+//   alert("✅ Login successful!");
+//   document.getElementById('modal').style.display = 'none';
+  
+//   // Navigate based on role
+//   import("../render.js").then(({ selectRole }) => {
+//     selectRole("loggedPatient");
+//   });
+// }else {
+//     alert("❌ Login failed: " + result.message);
+//   }
+// });
+// }
+
+if (type === "patientLogin") {
+  document.getElementById("loginBtn").addEventListener("click", async () => {
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+
+    const result = await loginPatient({ email, password });
+
+    if (result.success) {
+      localStorage.setItem("userRole", "loggedPatient");
+      localStorage.setItem("token", result.token); // make sure result.token is correct
+      // alert("✅ Login successful!");
+      document.getElementById('modal').style.display = 'none';
+
+      // 🧠 Dynamic import after login success
+      import("../render.js").then(({ selectRole }) => {
+        selectRole("loggedPatient");
+      });
+    } else {
+      alert("❌ Login failed: " + result.message);
+    }
+  });
+}
+
+  
   if (type === 'addDoctor') {
     document.getElementById('saveDoctorBtn').addEventListener('click', adminAddDoctor);
   }

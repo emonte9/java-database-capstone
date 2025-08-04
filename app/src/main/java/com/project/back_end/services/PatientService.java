@@ -8,8 +8,10 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.project.back_end.DTO.AppointmentDTO;
@@ -78,7 +80,15 @@ public class PatientService {
     private final AppointmentRepository appointmentRepository;
     private final TokenService tokenService;
 
+@Autowired
+private PasswordEncoder passwordEncoder;
 
+//     result.put("status", "success");
+// result.put("data", dtos);
+// return ResponseEntity.ok(result);
+
+    private static final int STATUS_PAST = 1;
+    private static final int STATUS_FUTURE = 0;
 
 
     public PatientService(PatientRepository patientRepository,
@@ -93,6 +103,7 @@ public class PatientService {
 
     public int createPatient(Patient patient) {
         try {
+            // patient.setPassword(passwordEncoder.encode(patient.getPassword())); //added this
             patientRepository.save(patient);
             return 1;
         } catch (Exception e) {
@@ -105,6 +116,12 @@ public class PatientService {
     @Transactional
     public ResponseEntity<Map<String, Object>> getPatientAppointment(Long id, String token) {
         Map<String, Object> result = new HashMap<>();
+
+        if (token == null || token.isBlank()) {
+            result.put("message", "Token is missing or invalid");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result);
+        }
+
         String email = tokenService.extractIdentifier(token);
 
         Patient patient = patientRepository.findByEmail(email);
@@ -132,7 +149,11 @@ public class PatientService {
         //     .stream()
         //     .collect(Collectors.mapping(AppointmentDTO::from, Collectors.toList()));
 
-        result.put("appointments", dtos);
+        // result.put("appointments", dtos);
+        // return ResponseEntity.ok(result);
+
+        result.put("status", "success");
+        result.put("data", dtos);
         return ResponseEntity.ok(result);
     }
 
@@ -142,9 +163,11 @@ public class PatientService {
         List<Appointment> appts;
 
         if ("past".equalsIgnoreCase(condition)) {
-            appts = appointmentRepository.findByPatient_IdAndStatusOrderByAppointmentTimeAsc(id, 1);
+            // appts = appointmentRepository.findByPatient_IdAndStatusOrderByAppointmentTimeAsc(id, 1);
+            appts = appointmentRepository.findByPatient_IdAndStatusOrderByAppointmentTimeAsc(id, STATUS_PAST);
         } else if ("future".equalsIgnoreCase(condition)) {
-            appts = appointmentRepository.findByPatient_IdAndStatusOrderByAppointmentTimeAsc(id, 0);
+            // appts = appointmentRepository.findByPatient_IdAndStatusOrderByAppointmentTimeAsc(id, 0);
+            appts =  appointmentRepository.findByPatient_IdAndStatusOrderByAppointmentTimeAsc(id, STATUS_FUTURE);
         } else {
             result.put("message", "Invalid condition. Use 'past' or 'future'");
             return ResponseEntity.badRequest().body(result);
@@ -164,7 +187,10 @@ public class PatientService {
                 .map(AppointmentDTO::from)
                 .collect(Collectors.toList());
 
-        result.put("appointments", dtos);
+        // result.put("appointments", dtos);
+        // return ResponseEntity.ok(result);
+        result.put("status", "success");
+        result.put("data", dtos);
         return ResponseEntity.ok(result);
     }
 
@@ -190,7 +216,15 @@ public class PatientService {
     }
 
     public ResponseEntity<Map<String, Object>> getPatientDetails(String token) {
+
+        
         Map<String, Object> result = new HashMap<>();
+
+
+        if (token == null || token.isBlank()) {
+            result.put("message", "Token is missing or invalid");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result);
+        }
         String email = tokenService.extractIdentifier(token);
 
         Patient opt = patientRepository.findByEmail(email);
@@ -199,8 +233,12 @@ public class PatientService {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(result);
         }
 
-        result.put("patient", opt);
+        // result.put("patient", opt);
+        // return ResponseEntity.ok(result);
+        result.put("status", "success");
+        result.put("data", opt);
         return ResponseEntity.ok(result);
+
     }
 
 

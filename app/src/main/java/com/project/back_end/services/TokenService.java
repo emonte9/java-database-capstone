@@ -14,7 +14,8 @@ import com.project.back_end.repo.DoctorRepository;
 import com.project.back_end.repo.PatientRepository;
 
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.JwtBuilder;
+import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
@@ -68,6 +69,7 @@ public class TokenService {
     private String jwtSecret;
 
     private SecretKey secretKey;
+    private JwtParser jwtParser;
 
     public TokenService(AdminRepository adminRepository,
                         DoctorRepository doctorRepository,
@@ -77,35 +79,98 @@ public class TokenService {
         this.patientRepository = patientRepository;
     }
 
-    @PostConstruct
-    private void initKey() {
-        this.secretKey = Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
-    }
-
-    public String generateToken(String identifier, String role) {
-        Instant now = Instant.now();
-        Instant expiry = now.plusSeconds(7 * 24 * 60 * 60); // 7 days
-
-        JwtBuilder builder = Jwts.builder()
-                .subject(identifier)
-                .claim("role", role)
-                .issuedAt(Date.from(now))
-                .expiration(Date.from(expiry))
-                .signWith(secretKey);
-
-        return builder.compact();
-    }
+    // @PostConstruct
+    // private void initKey() {
+    //     this.secretKey = Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
+    // }
 
 
-    public String extractIdentifier(String token) {
-        Claims claims = Jwts.parser()
-                .verifyWith(secretKey)
-                .build()
+//       @PostConstruct
+//   private void init() {
+//     // Decode base64 (if you stored secret as Base64) or raw bytes
+//     byte[] keyBytes = jwtSecret.getBytes(StandardCharsets.UTF_8);
+//     this.secretKey = Keys.hmacShaKeyFor(keyBytes);
+//   }
+@PostConstruct
+private void init() {
+    byte[] keyBytes = jwtSecret.getBytes(StandardCharsets.UTF_8);
+    this.secretKey = Keys.hmacShaKeyFor(keyBytes);
+
+     // Back in 0.11.5, parser() still exists
+    this.jwtParser = Jwts
+        .parser()              // ← must use parserBuilder()
+        .verifyWith(secretKey)        // ← replaces setSigningKey(...)
+        //.decryptWith(decryptionKey)   // ← optional, only for encrypted JWTs
+        .build();
+}
+
+    // public String generateToken(String identifier, String role) {
+    //     Instant now = Instant.now();
+    //     Instant expiry = now.plusSeconds(7 * 24 * 60 * 60); // 7 days
+
+    //     JwtBuilder builder = Jwts.builder()
+    //             .subject(identifier)
+    //             .claim("role", role)
+    //             .issuedAt(Date.from(now))
+    //             .expiration(Date.from(expiry))
+    //             .signWith(secretKey);
+
+    //     return builder.compact();
+    // }
+
+    /**
+   * Generate a JWT with subject=identifier and a 'role' claim.
+   * Expires in 7 days.
+   */
+ public String generateToken(String identifier, String role) {
+    Instant now    = Instant.now();
+    Instant expiry = now.plusSeconds(7 * 24 * 3600);
+
+    return Jwts.builder()
+        // replace setSubject(...) with subject(...)
+        .subject(identifier)
+
+        .claim("role", role)
+
+        // replace setIssuedAt(...) with issuedAt(...)
+        .issuedAt(Date.from(now))
+
+        // replace setExpiration(...) with expiration(...)
+        .expiration(Date.from(expiry))
+
+        // drop the SignatureAlgorithm arg; 
+        // the HS256 algorithm will be inferred from the SecretKey
+        .signWith(secretKey)
+
+        .compact();
+}
+
+
+ private Claims parseToken(String token) throws JwtException {
+        return jwtParser
                 .parseSignedClaims(token)
                 .getPayload();
-
-        return claims.getSubject();
     }
+
+//      public String extractIdentifier(String token) {
+//     Claims claims = parseToken(token);
+//     return claims.getSubject();
+//   }
+
+ public String extractIdentifier(String token) {
+        return parseToken(token).getSubject();
+    }
+
+
+    // public String extractIdentifier(String token) {
+    //     Claims claims = Jwts.parser()
+    //             .verifyWith(secretKey)
+    //             .build()
+    //             .parseSignedClaims(token)
+    //             .getPayload();
+
+    //     return claims.getSubject();
+    // }
 
 
 
@@ -113,17 +178,35 @@ public class TokenService {
     // check below
      
     // 3. Validate Token for a given role (admin, doctor, patient)
-    public boolean validateToken(String token, String role) {
+    // public boolean validateToken(String token, String role) {
+    //     try {
+    //         String identifier = extractIdentifier(token);
+
+    //         return switch (role.toLowerCase()) {
+    //             case "admin" -> adminRepository.findByUsername(identifier) != null;
+    //             case "doctor" -> doctorRepository.findByEmail(identifier) != null;
+    //             case "patient" -> patientRepository.findByEmail(identifier) != null;
+    //             default -> false;
+    //         };
+    //     } catch (Exception e) {
+    //         return false;
+    //     }
+    // }
+
+
+   public boolean validateToken(String token, String role) {
         try {
-            String identifier = extractIdentifier(token);
+            Claims claims = parseToken(token);
+            String id     = claims.getSubject();
 
             return switch (role.toLowerCase()) {
-                case "admin" -> adminRepository.findByUsername(identifier) != null;
-                case "doctor" -> doctorRepository.findByEmail(identifier) != null;
-                case "patient" -> patientRepository.findByEmail(identifier) != null;
-                default -> false;
+                case "admin"  -> adminRepository.findByUsername(id) != null;
+                case "doctor" -> doctorRepository.findByEmail(id)   != null;
+                case "patient"-> patientRepository.findByEmail(id)  != null;
+                default       -> false;
             };
-        } catch (Exception e) {
+        } catch (JwtException | IllegalArgumentException ex) {
+            // malformed, expired, or signature invalid
             return false;
         }
     }

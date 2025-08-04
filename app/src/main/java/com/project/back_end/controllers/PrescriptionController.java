@@ -71,7 +71,7 @@ public class PrescriptionController {
             return validation;
         }
 
-        ResponseEntity<Map<String, String>> response = prescriptionService.savePrescription(prescription);
+        ResponseEntity<Map<String, Object>> response = prescriptionService.savePrescription(prescription);
 
         // Only update appointment status if prescription was actually saved
         if (response.getStatusCode() == HttpStatus.CREATED) {

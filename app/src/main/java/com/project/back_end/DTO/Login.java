@@ -30,7 +30,7 @@ public class Login {
 
 
     @JsonProperty("email")
-    private String identifier; 
+    private String email; 
     
     private String password;
 
@@ -39,33 +39,28 @@ public class Login {
      public Login() {
     }
 
-    // Constructor with fields (optional)
-    public Login(String identifier, String password) {
-        this.identifier = identifier;
+    public Login(String email, String password) {
+        this.email = email;
         this.password = password;
     }
 
-    // Getters and Setters
 
-    public String getIdentifier() {
-        return identifier;
+    public String getEmail() {
+        return this.email;
     }
 
-    public void setIdentifier(String identifier) {
-        this.identifier = identifier;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getPassword() {
-        return password;
+        return this.password;
     }
 
     public void setPassword(String password) {
         this.password = password;
     }
-
-
-
-
+    
 
 
 }
